@@ -1,0 +1,415 @@
+// Euro Store — Prisma Schema v5
+// Supabase PostgreSQL + pgBouncer (Netlify Functions serverless-safe)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")       // pgBouncer port 6543 → serverless safe
+  directUrl = env("DIRECT_URL")         // direct port 5432   → migrations only
+}
+
+// ─── Enums ────────────────────────────────────────────────────────────────
+
+enum Role {
+  CUSTOMER
+  HELPER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH_ON_DELIVERY
+  SHAM_CASH
+  CARD
+}
+
+enum ExchangeStatus {
+  REQUESTED
+  QR_GENERATED
+  RECEIVED_BY_HELPER
+  PROCESSING
+  SHIPPED
+  COMPLETED
+  REJECTED
+}
+
+enum LoyaltyTxType {
+  EARN_ONLINE
+  EARN_IN_STORE
+  REDEEM
+  EXPIRE
+  MANUAL_ADJUST
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum SubmissionType {
+  NEW_PRODUCT
+  EDIT_PRODUCT
+  INVENTORY_UPDATE
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ─── User ─────────────────────────────────────────────────────────────────
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  name           String
+  phone          String?
+  avatarUrl      String?
+  role           Role     @default(CUSTOMER)
+  loyaltyPoints  Int      @default(0)
+  loyaltyQrCode  String   @unique @default(cuid())
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  orders             Order[]
+  wishlistItems      WishlistItem[]
+  reviews            Review[]
+  addresses          Address[]
+  loyaltyTxs         LoyaltyTransaction[]
+  discountUsages     DiscountUsage[]
+  exchangeRequests   ExchangeRequest[]
+  helperProfile      HelperProfile?
+
+  @@index([email])
+  @@index([loyaltyQrCode])
+  @@index([role])
+}
+
+// ─── Helper + PartnerShop ─────────────────────────────────────────────────
+
+model HelperProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  partnerShopId String?
+  partnerShop   PartnerShop? @relation(fields: [partnerShopId], references: [id])
+  submissions   HelperSubmission[]
+  loyaltyEarns  LoyaltyTransaction[]
+  exchangesReceived ExchangeRequest[] @relation("HelperExchanges")
+}
+
+model PartnerShop {
+  id        String   @id @default(cuid())
+  name      String
+  nameAr    String
+  address   String
+  city      String
+  phone     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  helpers   HelperProfile[]
+  exchanges ExchangeRequest[]
+}
+
+// ─── Catalog ──────────────────────────────────────────────────────────────
+
+model Category {
+  id           String     @id @default(cuid())
+  nameAr       String
+  nameEn       String
+  slug         String     @unique
+  image        String?
+  parentId     String?
+  parent       Category?  @relation("Children", fields: [parentId], references: [id])
+  children     Category[] @relation("Children")
+  products     Product[]
+  displayOrder Int        @default(0)
+  isActive     Boolean    @default(true)
+
+  @@index([slug])
+  @@index([parentId])
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  nameAr   String
+  nameEn   String
+  slug     String    @unique
+  logo     String?
+  isActive Boolean   @default(true)
+  products Product[]
+
+  @@index([slug])
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  nameAr        String
+  nameEn        String
+  descriptionAr String?
+  descriptionEn String?
+  price         Float
+  salePrice     Float?
+  images        String[]
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id])
+  brandId       String?
+  brand         Brand?   @relation(fields: [brandId], references: [id])
+  sizes         String[]
+  colors        String[]
+  colorHexes    String[] // موازٍ لـ colors
+  stock         Int      @default(0)
+  salesCount    Int      @default(0)
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  tags          String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  orderItems    OrderItem[]
+  wishlistItems WishlistItem[]
+  reviews       Review[]
+  exchangeItems ExchangeItem[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([isActive, createdAt])
+  @@index([isActive, salesCount])
+  @@index([isActive, price])
+}
+
+// ─── Orders ───────────────────────────────────────────────────────────────
+
+model Order {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  status          OrderStatus   @default(PENDING)
+  subtotal        Float
+  discountAmount  Float         @default(0)
+  loyaltyDiscount Float         @default(0)
+  shippingCost    Float         @default(0)
+  total           Float
+  paymentMethod   PaymentMethod @default(CASH_ON_DELIVERY)
+  isPaid          Boolean       @default(false)
+  addressId       String?
+  address         Address?      @relation(fields: [addressId], references: [id])
+  discountCodeId  String?
+  discountCode    DiscountCode? @relation(fields: [discountCodeId], references: [id])
+  pointsUsed      Int           @default(0)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  items           OrderItem[]
+  exchangeRequest ExchangeRequest[]
+  discountUsage   DiscountUsage?
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  nameAr    String
+  price     Float
+  qty       Int
+  size      String?
+  color     String?
+  image     String?
+
+  @@index([orderId])
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label     String   @default("المنزل")
+  name      String
+  phone     String
+  city      String
+  district  String?
+  street    String
+  building  String?
+  notes     String?
+  isDefault Boolean  @default(false)
+  orders    Order[]
+
+  @@index([userId])
+}
+
+// ─── Wishlist ─────────────────────────────────────────────────────────────
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+// ─── Reviews ──────────────────────────────────────────────────────────────
+
+model Review {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  rating     Int      // 1-5
+  comment    String?
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([productId, isApproved])
+}
+
+// ─── Exchange ─────────────────────────────────────────────────────────────
+
+model ExchangeRequest {
+  id            String         @id @default(cuid())
+  orderId       String
+  order         Order          @relation(fields: [orderId], references: [id])
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  status        ExchangeStatus @default(REQUESTED)
+  qrCode        String?        @unique @default(cuid())
+  partnerShopId String?
+  partnerShop   PartnerShop?   @relation(fields: [partnerShopId], references: [id])
+  helperId      String?
+  helper        HelperProfile? @relation("HelperExchanges", fields: [helperId], references: [id])
+  helperNote    String?
+  adminNote     String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  items ExchangeItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([qrCode])
+}
+
+model ExchangeItem {
+  id          String          @id @default(cuid())
+  exchangeId  String
+  exchange    ExchangeRequest @relation(fields: [exchangeId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product         @relation(fields: [productId], references: [id])
+  qty         Int
+  size        String?
+  color       String?
+  newSize     String?
+  newColor    String?
+  reason      String?
+
+  @@index([exchangeId])
+}
+
+// ─── Loyalty ──────────────────────────────────────────────────────────────
+
+model LoyaltyTransaction {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type          LoyaltyTxType
+  points        Int           // موجب = ربح | سالب = استخدام
+  balanceAfter  Int
+  description   String
+  orderId       String?
+  invoiceAmount Float?        // للمشتريات داخل المحل
+  helperId      String?
+  helper        HelperProfile? @relation(fields: [helperId], references: [id])
+  createdAt     DateTime       @default(now())
+
+  @@index([userId])
+  @@index([type])
+}
+
+model LoyaltySettings {
+  id                 String @id @default("global")
+  pointsPerSyp       Float  @default(0.001) // 1 SYP = 0.001 نقطة
+  pointValueSyp      Float  @default(10.0)  // 1 نقطة = 10 SYP خصم
+  maxRedeemPercent   Float  @default(0.5)   // لا تتجاوز 50% من الطلب
+  minRedeemPoints    Int    @default(10)
+  updatedAt          DateTime @updatedAt
+}
+
+// ─── Discounts ────────────────────────────────────────────────────────────
+
+model DiscountCode {
+  id             String       @id @default(cuid())
+  code           String       @unique
+  description    String?
+  type           DiscountType
+  value          Float
+  minOrderAmount Float?
+  isFirstOrder   Boolean      @default(false)
+  maxUses        Int?
+  usedCount      Int          @default(0)
+  categoryIds    String[]
+  isActive       Boolean      @default(true)
+  expiresAt      DateTime?
+  createdAt      DateTime     @default(now())
+
+  orders  Order[]
+  usages  DiscountUsage[]
+
+  @@index([code, isActive])
+}
+
+model DiscountUsage {
+  id        String       @id @default(cuid())
+  codeId    String
+  code      DiscountCode @relation(fields: [codeId], references: [id])
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  orderId   String       @unique
+  order     Order        @relation(fields: [orderId], references: [id])
+  createdAt DateTime     @default(now())
+
+  @@unique([codeId, userId])
+}
+
+// ─── Helper Submissions ───────────────────────────────────────────────────
+
+model HelperSubmission {
+  id          String           @id @default(cuid())
+  helperId    String
+  helper      HelperProfile    @relation(fields: [helperId], references: [id])
+  type        SubmissionType
+  status      SubmissionStatus @default(PENDING)
+  data        Json             // بيانات المنتج أو التعديل
+  adminNote   String?
+  reviewedAt  DateTime?
+  createdAt   DateTime         @default(now())
+
+  @@index([helperId])
+  @@index([status])
+}

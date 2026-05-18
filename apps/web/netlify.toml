@@ -1,0 +1,28 @@
+﻿# Euro Store — Web App — Netlify Config
+[build]
+  base    = "apps/web"
+  command = "cd ../.. && npm run build --workspace=apps/web"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  node_bundler = "nft"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options   = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy   = "strict-origin-when-cross-origin"
+
+[[redirects]]
+  from   = "/"
+  to     = "/ar"
+  status = 302
+  force  = false

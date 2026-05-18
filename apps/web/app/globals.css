@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Light ── */
+:root{
+  --bg:#fafafa; --bg-2:#f4f4f5; --surface:#ffffff; --surface-2:#f9f9f9;
+  --border:#e4e4e7; --border-2:#d4d4d8;
+  --text-1:#09090b; --text-2:#52525b; --text-3:#a1a1aa;
+  --gold:#d4a017; --gold-h:#b8860b;
+  --gold-bg:rgba(212,160,23,.08); --gold-br:rgba(212,160,23,.2);
+  --red:#ef4444;
+  --sh-sm:0 1px 3px rgba(0,0,0,.06);
+  --sh-md:0 4px 14px rgba(0,0,0,.08);
+  --sh-lg:0 8px 32px rgba(0,0,0,.12);
+  --r:12px; --t:.2s cubic-bezier(.4,0,.2,1);
+}
+/* ── Dark ── */
+.dark{
+  --bg:#09090b; --bg-2:#111113; --surface:#18181b; --surface-2:#1f1f23;
+  --border:#27272a; --border-2:#3f3f46;
+  --text-1:#fafafa; --text-2:#a1a1aa; --text-3:#52525b;
+  --gold:#d4a017; --gold-h:#e8b420;
+  --gold-bg:rgba(212,160,23,.06); --gold-br:rgba(212,160,23,.14);
+  --sh-sm:0 1px 3px rgba(0,0,0,.4);
+  --sh-md:0 4px 16px rgba(0,0,0,.5);
+  --sh-lg:0 8px 32px rgba(0,0,0,.6);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--text-1);
+  font-family:"Tajawal",system-ui,sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+img{display:block;max-width:100%}
+::selection{background:var(--gold);color:#000}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:99px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+
+/* CSS-only hover (للمكونات Server-side) */
+.cat-card{transition:all var(--t)}
+.cat-card:hover{border-color:var(--gold)!important;transform:translateY(-3px);box-shadow:0 4px 20px var(--gold-bg)}
+.footer-link{transition:color var(--t)}
+.footer-link:hover{color:var(--gold)!important}

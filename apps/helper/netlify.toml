@@ -1,0 +1,21 @@
+﻿# Euro Store — Helper Portal — Netlify Config
+[build]
+  base    = "apps/helper"
+  command = "cd ../.. && npm run build --workspace=apps/helper"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[functions]
+  node_bundler = "nft"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    X-Frame-Options = "DENY"

@@ -1,0 +1,19 @@
+﻿{
+  "site": {
+    "name": "Euro Store",
+    "tagline": "Your style starts here"
+  },
+  "nav": {
+    "men": "Men",
+    "women": "Women",
+    "kids": "Kids",
+    "shoes": "Shoes",
+    "bags": "Bags",
+    "accessories": "Accessories"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Cart is empty",
+    "add": "Add to Cart"
+  }
+}

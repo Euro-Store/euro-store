@@ -1,0 +1,387 @@
+﻿# Euro Store — Design System v3
+# نظام التصميم الكامل: ألوان، طباعة، مسافات، مكونات
+
+════════════════════════════════════════════════════════════════
+## 1. COLOR SYSTEM — نظام الألوان
+════════════════════════════════════════════════════════════════
+
+### Primary — الذهبي (لا يتغير بين الثيمين)
+```
+--color-gold:        #d4a017   ← primary actions, key borders
+--color-gold-light:  #f2c94c   ← hover, glow, highlight
+--color-gold-deep:   #a87400   ← pressed, active, dark badge
+--color-gold-alpha:  #d4a01720 ← خلفية شبه شفافة للـ badges
+```
+
+### Dark Theme — الثيم الغامق
+```
+background:   #0a0a0a    ← أعمق — body
+surface:      #121212    ← بطاقات، panels
+elevated:     #1a1a1a    ← hover backgrounds
+border:       #2a2a2a    ← حدود البطاقات
+border-light: #3a3a3a    ← حدود خفيفة
+text-primary: #f5f5f5
+text-secondary:#a0a0a0
+text-muted:   #666666
+```
+
+### Light Theme — الثيم الفاتح
+```
+background:   #f7f5ef    ← warm white — body
+surface:      #ffffff    ← بطاقات، panels
+elevated:     #f0ede4    ← hover backgrounds
+border:       #e5e7eb    ← حدود البطاقات
+border-light: #eeeeee    ← حدود خفيفة
+text-primary: #111111
+text-secondary:#555555
+text-muted:   #9ca3af
+```
+
+### Semantic Colors
+```
+success: #16a34a   ← متوفر، طلب مكتمل، نقاط مكتسبة
+warning: #f59e0b   ← تحذير، كمية محدودة، نقاط منتهية الصلاحية
+error:   #dc2626   ← خطأ، نفذ المخزون، كود خصم غير صالح
+info:    #0284c7   ← معلومات، حالة الاستبدال
+muted:   #6b7280   ← disabled, coming-soon elements
+```
+
+════════════════════════════════════════════════════════════════
+## 2. TYPOGRAPHY — الطباعة
+════════════════════════════════════════════════════════════════
+
+```
+Font Family: Tajawal (Google Fonts) — لكل الواجهة العربية
+Fallback: system-ui, -apple-system, sans-serif
+
+Scale:
+┌──────────┬────────┬────────┬─────────────────────────────┐
+│ Name     │ Size   │ Weight │ Usage                       │
+├──────────┼────────┼────────┼─────────────────────────────┤
+│ display  │ 48px   │ 700    │ Hero headlines               │
+│ h1       │ 36px   │ 700    │ Page titles                 │
+│ h2       │ 28px   │ 600    │ Section headers             │
+│ h3       │ 22px   │ 600    │ Card titles                 │
+│ h4       │ 18px   │ 600    │ Sub-sections                │
+│ body-lg  │ 16px   │ 400    │ Main body text              │
+│ body     │ 14px   │ 400    │ Default UI text             │
+│ small    │ 12px   │ 400    │ Captions, labels            │
+│ xs       │ 11px   │ 400    │ Legal, metadata             │
+└──────────┴────────┴────────┴─────────────────────────────┘
+
+Line Heights:
+- headings: 1.2
+- body:     1.6
+- compact:  1.3 (cards, small UI)
+```
+
+════════════════════════════════════════════════════════════════
+## 3. SPACING SYSTEM — نظام المسافات
+════════════════════════════════════════════════════════════════
+
+```
+Base unit: 4px (Tailwind default)
+
+Scale: 1=4px | 2=8px | 3=12px | 4=16px | 6=24px | 8=32px
+       10=40px | 12=48px | 16=64px | 20=80px | 24=96px
+
+Usage:
+- Component padding:  px-4 py-3  (button)
+- Card padding:       p-4 (mobile) / p-6 (desktop)
+- Section padding:    py-12 (mobile) / py-20 (desktop)
+- Gap between cards:  gap-4 (mobile) / gap-6 (desktop)
+- Container max:      max-w-7xl mx-auto px-4 md:px-8
+```
+
+════════════════════════════════════════════════════════════════
+## 4. COMPONENT SPECS — مواصفات المكونات
+════════════════════════════════════════════════════════════════
+
+### Button
+```
+Variants:
+┌──────────────┬────────────────────────────────────────────┐
+│ primary      │ bg-gold text-dark-base font-semibold       │
+│              │ hover:bg-gold-light transition             │
+│              │ px-6 py-3 rounded-btn                      │
+├──────────────┼────────────────────────────────────────────┤
+│ secondary    │ border border-gold text-gold               │
+│              │ hover:bg-gold-alpha                        │
+│              │ px-6 py-3 rounded-btn                      │
+├──────────────┼────────────────────────────────────────────┤
+│ ghost        │ text-text-primary hover:bg-elevated        │
+│              │ px-4 py-2                                   │
+├──────────────┼────────────────────────────────────────────┤
+│ danger       │ bg-error text-white hover:bg-red-700       │
+├──────────────┼────────────────────────────────────────────┤
+│ disabled     │ opacity-40 cursor-not-allowed              │
+│ coming soon  │ opacity-40 cursor-not-allowed              │
+│              │ + tooltip "يتوفر قريباً"                   │
+└──────────────┴────────────────────────────────────────────┘
+
+Sizes: sm(px-3 py-1.5 text-sm) | md(px-6 py-3) | lg(px-8 py-4 text-lg)
+```
+
+### Product Card
+```
+┌──────────────────────────────────────────────────┐
+│  ┌──────────────────────────────────────────┐   │
+│  │                                          │   │
+│  │          Product Image                   │   │
+│  │       (hover: swap to img2)              │   │
+│  │                                          │   │
+│  │  [DISCOUNT BADGE]              [♡ btn]  │   │
+│  └──────────────────────────────────────────┘   │
+│                                                  │
+│  Brand Name             ●●● (color dots)         │
+│  Product Name (2 lines max)                      │
+│                                                  │
+│  ~~original~~    Sale Price    [-30%]            │
+│                                                  │
+└──────────────────────────────────────────────────┘
+
+Dimensions:
+- Mobile:  calc(50vw - 24px) width, auto height
+- Tablet:  calc(33vw - 24px)
+- Desktop: 280px fixed or grid auto-fill
+
+Interaction:
+- hover → show secondary image + subtle shadow
+- wishlist btn → scale pulse animation
+- quick add → slide up from bottom of card (optional M3+)
+```
+
+### Header Layout
+```
+┌─────────────────────────────────────────────────────────────┐
+│ TOP BAR: [شحن مجاني للطلبات فوق ...]        [AR | EN]     │  h=36px
+├─────────────────────────────────────────────────────────────┤
+│ [LOGO]    [Nav: رجالي نسائي ولادي أحذية شنط]              │  h=64px
+│           [              SEARCH BAR              ]          │
+│           [🌙][♡ 2][🛍 3][👤]                             │
+├─────────────────────────────────────────────────────────────┤
+│ MEGA MENU (on hover nav item):                              │
+│  ┌──────────────┬──────────────┬──────────────────────┐   │
+│  │ أقسام        │ براندات      │ [صورة ترويجية]       │   │
+│  │ • تي شيرتات  │ • Zara       │                      │   │
+│  │ • بناطيل     │ • H&M        │  [عنوان] + [CTA]    │   │
+│  │ • جاكيتات    │ • Pull&Bear  │                      │   │
+│  └──────────────┴──────────────┴──────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Filter System
+```
+DESKTOP (Sidebar — right side in RTL):
+┌──────────────────────────────────────────────────────────┐
+│ الفلاتر                              [مسح الكل]         │
+├──────────────────────────────────────────────────────────┤
+│ ▼ السعر                                                  │
+│   ════════●══════════════════  (slider)                 │
+│   0 SYP ─────────────── 500,000 SYP                    │
+├──────────────────────────────────────────────────────────┤
+│ ▼ اللون                                                  │
+│   ● أسود (34)   ● أبيض (21)   ● أزرق (18)             │
+├──────────────────────────────────────────────────────────┤
+│ ▼ المقاس                                                 │
+│   [XS] [S] [M] [L] [XL] [XXL]                          │
+├──────────────────────────────────────────────────────────┤
+│ ▼ البراند                                                │
+│   ☑ Zara (45)     ☐ H&M (38)                           │
+├──────────────────────────────────────────────────────────┤
+│ ▼ الخصم                                                  │
+│   ☐ عروض فقط                                            │
+└──────────────────────────────────────────────────────────┘
+
+MOBILE (Bottom Sheet):
+╔═══════════════════════════════════╗
+║          ━━━━━ (handle)           ║
+║  الفلاتر              [×]         ║
+╠═══════════════════════════════════╣
+║  [السعر] [اللون] [المقاس] [براند] ║
+╠═══════════════════════════════════╣
+║  [محتوى الـ tab المحدد]           ║
+╠═══════════════════════════════════╣
+║   [مسح]      [عرض 124 منتج]      ║
+╚═══════════════════════════════════╝
+```
+
+### Discount Code Input — مدخل كود الخصم
+```
+┌──────────────────────────────────────────────────────────┐
+│ كود الخصم (اختياري)                                      │
+│                                                          │
+│ ┌────────────────────────────────┐  ┌──────────────────┐│
+│ │  أدخل الكود هنا                │  │   تطبيق الكود   ││
+│ └────────────────────────────────┘  └──────────────────┘│
+│                                                          │
+│ ✓ [SUCCESS STATE]: تم تطبيق خصم 15% (-5,250 ل.س)       │
+│ ✕ [ERROR STATE]:   كود غير صالح أو منتهي الصلاحية        │
+└──────────────────────────────────────────────────────────┘
+
+States:
+- idle:    border-border, text-muted placeholder
+- loading: spinner داخل الزر
+- success: border-success, text-success + قيمة الخصم
+- error:   border-error, text-error + رسالة الخطأ
+
+Rules:
+- يقبل حرف + رقم فقط (لا مسافات)
+- Auto-uppercase عند الكتابة
+- لا يمكن تطبيق كودين في نفس الطلب
+```
+
+### Payment Options — خيارات الدفع
+```
+┌──────────────────────────────────────────────────────────┐
+│ طريقة الدفع                                               │
+│                                                          │
+│ ┌──────────────────────────────────────────────────────┐ │
+│ │  ● كاش عند الاستلام          [✓ متاح]               │ │
+│ └──────────────────────────────────────────────────────┘ │
+│ ┌──────────────────────────────────────────────────────┐ │
+│ │  ● شام كاش                   [✓ متاح]               │ │
+│ └──────────────────────────────────────────────────────┘ │
+│ ┌──────────────────────────────────────────────────────┐ │
+│ │  ○ بطاقة ائتمان / Visa / MC  [يتوفر قريباً]         │ │
+│ └──────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────┘
+
+States:
+- كاش COD + شام كاش : active — قابل للاختيار
+- بطاقات:              disabled + coming-soon tooltip
+```
+
+### Loyalty Points Toggle — استخدام النقاط
+```
+┌──────────────────────────────────────────────────────────┐
+│ نقاطي                                                    │
+│                                                          │
+│ رصيد: 2,500 نقطة ≈ 250 ل.س خصم                        │
+│                                                          │
+│ [●══════════] استخدام النقاط في هذا الطلب               │
+│                                                          │
+│ [ON STATE]: سيُخصم 250 ل.س من المجموع                  │
+│ [OFF STATE]: حفظ النقاط للمرة القادمة                    │
+└──────────────────────────────────────────────────────────┘
+
+Rules:
+- يظهر فقط إذا كان لدى المستخدم نقاط
+- النقاط لا تتجاوز 50% من قيمة الطلب
+- يمكن الجمع مع كود الخصم
+```
+
+### QR Code Display — عرض الـ QR
+```
+┌──────────────────────────────────────────────────────────┐
+│                                                          │
+│           ┌─────────────────────────┐                   │
+│           │  ▓▓▓ ░░░ ▓▓░░▓▓░ ▓▓▓  │                   │
+│           │  ░░░ ▓▓▓ ░░▓▓░░▓ ░░░  │                   │
+│           │  ▓▓░ ░░▓ ▓▓░░▓▓░ ░▓▓  │                   │
+│           │  ░▓▓ ▓░░ ░░▓▓░░▓ ▓░░  │                   │
+│           │  ▓░░ ░▓▓ ▓░░▓▓░░ ░▓▓  │                   │
+│           └─────────────────────────┘                   │
+│                                                          │
+│        [اعرض هذا الكود في المحل الشريك]                │
+│                 ينتهي بعد: 48 ساعة                      │
+│                                                          │
+│  [زر: تنزيل QR]    [زر: مشاركة]                       │
+└──────────────────────────────────────────────────────────┘
+
+Props: token (string), size (px), label (string), expiresAt?
+Library: qrcode.react → <QRCodeSVG value={token} size={size} />
+Colors: dark: #d4a017 (gold) على خلفية #121212
+        light: #0a0a0a على خلفية #ffffff
+```
+
+### Loyalty QR Card — بطاقة نقاط الولاء
+```
+┌──────────────────────────────────────────────────────────┐
+│  نقاطي                              2,500 نقطة           │
+│  ─────────────────────────────────────────────────────  │
+│                                                          │
+│     ┌──────────────┐    للكسب: اعرضه للمحاسب            │
+│     │   [QR Code]  │    عند كل عملية شراء               │
+│     │   200×200    │                                     │
+│     └──────────────┘    قيمة النقطة: 0.1 ل.س            │
+│                                                          │
+│  ════════════════════════════════════════════════════   │
+│  إجمالي المكتسب: 5,000 نقطة                            │
+│  إجمالي المستخدم: 2,500 نقطة                           │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Exchange Status Badge — شارة حالة الاستبدال
+```
+PENDING   → [🕐 قيد المعالجة]  bg-warning/10  text-warning
+CONFIRMED → [✓ تم الاستلام]   bg-info/10     text-info
+SHIPPED   → [🚚 في الطريق]     bg-info/10     text-info
+DONE      → [✅ مكتمل]         bg-success/10  text-success
+CANCELLED → [✕ ملغى]          bg-error/10    text-error
+```
+
+### Coming Soon Element — عنصر "يتوفر قريباً"
+```
+تطبق على: زر الاسترجاع، بطاقات الدفع الإلكتروني (Visa/MC/PayPal)
+```css
+.coming-soon {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  position: relative;
+}
+.coming-soon::after {
+  content: 'يتوفر قريباً';
+  position: absolute;
+  /* tooltip positioning */
+  background: #1a1a1a;
+  color: #a0a0a0;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+```
+
+════════════════════════════════════════════════════════════════
+## 5. ANIMATION PRINCIPLES — مبادئ الحركة
+════════════════════════════════════════════════════════════════
+
+```
+- Theme toggle: transition-all duration-200 ease-in-out
+- Hover states: transition duration-150
+- Modal/Sheet open: slide-in + fade 200ms
+- Skeleton loading: pulse animation
+- Cart badge count: scale bounce on update
+- Card hover image: opacity transition 300ms
+- Mega menu: fade + slide-down 150ms
+- Page transitions: fade 100ms
+- Toast notifications: slide-in from bottom 200ms
+- QR Code appear: fade-in + scale 300ms
+- Discount success: checkmark scale + color 200ms
+- Points toggle: smooth slide 150ms
+
+Rule: لا أنيمشن بطيء أو مبالغ فيه
+      السرعة أهم من الزخرفة
+```
+
+════════════════════════════════════════════════════════════════
+## 6. RESPONSIVE BREAKPOINTS — نقاط الكسر
+════════════════════════════════════════════════════════════════
+
+```
+Mobile:   < 640px    (sm)  ← الأولوية الأولى
+Tablet:   640-1023px (md)
+Desktop:  1024-1279px(lg)
+Wide:     ≥ 1280px   (xl)
+
+Grid Columns:
+- Cards: 2 cols (mobile) | 3 cols (tablet) | 4 cols (desktop)
+- Listing: sidebar hidden (mobile) | 1/4 + 3/4 (desktop)
+- Checkout: single col (mobile) | 2/3 + 1/3 (desktop)
+
+Container:
+- max-w-7xl (1280px) على كل الصفحات
+- padding: px-4 (mobile) px-6 (tablet) px-8 (desktop)
+```

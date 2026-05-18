@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && cd apps/admin && npx next build"
+  command = "npm install && cd apps/admin && npm install styled-jsx && npx next build"
   publish = "apps/admin/.next"
 
 [build.environment]

@@ -8,12 +8,14 @@ import SearchBar  from './SearchBar'
 import MegaMenu   from './MegaMenu'
 import ThemeToggle from './ThemeToggle'
 import { navLinks } from '@/lib/design-tokens'
+import { useAuthStore } from '@/store/authStore'
 
 export default function Header() {
   const [scrolled,    setScrolled]    = useState(false)
   const [activeMenu,  setActiveMenu]  = useState<string | null>(null)
   const [cartCount,   setCartCount]   = useState(0)
   const [mobileOpen,  setMobileOpen]  = useState(false)
+  const { user } = useAuthStore()
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 8)
@@ -58,18 +60,17 @@ export default function Header() {
                   </div>
                 )
               })}
-            <LogoutButton />
-</nav>
+            </nav>
 
             {/* Icons */}
             <div className="flex items-center gap-0.5 mr-auto">
               <SearchBar />
               <ThemeToggle />
-              <Link href="/ar/account/wishlist" aria-label="Ø§Ù„Ù…ÙØ¶Ù„Ø©"
+              <Link href="/ar/account/wishlist" aria-label="المفضلة"
                 className="p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
                 <Heart size={18} />
               </Link>
-              <Link href="/ar/cart" aria-label="Ø§Ù„Ø³Ù„Ø©"
+              <Link href="/ar/cart" aria-label="السلة"
                 className="relative p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
                 <ShoppingBag size={18} />
                 {cartCount > 0 && (
@@ -78,10 +79,20 @@ export default function Header() {
                   </span>
                 )}
               </Link>
-              <Link href="/ar/auth/login" aria-label="Ø­Ø³Ø§Ø¨ÙŠ"
-                className="p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
-                <User size={18} />
-              </Link>
+              {user ? (
+                <>
+                  <Link href="/ar/account" aria-label="حسابي"
+                    className="p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
+                    <User size={18} />
+                  </Link>
+                  <LogoutButton />
+                </>
+              ) : (
+                <Link href="/ar/auth/login" aria-label="تسجيل الدخول"
+                  className="p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
+                  <User size={18} />
+                </Link>
+              )}
             </div>
 
             {/* Mobile Hamburger */}
@@ -106,6 +117,7 @@ export default function Header() {
                   {item.label}
                 </Link>
               ))}
+              {user && <div className="pt-2"><LogoutButton /></div>}
             </div>
           </div>
         )}

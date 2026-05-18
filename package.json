@@ -8,13 +8,14 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:web":    "turbo run dev --filter=@euro/web",
-    "dev:admin":  "turbo run dev --filter=admin",
+    "dev:web": "turbo run dev --filter=@euro/web",
+    "dev:admin": "turbo run dev --filter=admin",
     "dev:helper": "turbo run dev --filter=helper",
-    "build":      "turbo run build",
-    "lint":       "turbo run lint"
+    "build": "turbo run build",
+    "lint": "turbo run lint"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.15.11",
     "turbo": "^2.9.14"
   }
 }

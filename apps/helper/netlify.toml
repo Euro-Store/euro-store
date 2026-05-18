@@ -1,5 +1,5 @@
 [build]
-  command = "cd apps/helper && rm -rf node_modules && npm install --legacy-peer-deps --include=dev && npx next build"
+  command = "cd apps/helper && npm install --legacy-peer-deps --include=dev && npx next build"
   publish = "apps/helper/.next"
 
 [build.environment]

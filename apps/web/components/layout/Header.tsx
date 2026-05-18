@@ -2,19 +2,12 @@
 import { useState, useEffect } from 'react'
 import { LogoutButton } from '@/components/shared/LogoutButton'
 import Link from 'next/link'
-import { LogoutButton } from '@/components/shared/LogoutButton'
 import { Heart, ShoppingBag, User } from 'lucide-react'
-import { LogoutButton } from '@/components/shared/LogoutButton'
 import TopBanner from './TopBanner'
-import { LogoutButton } from '@/components/shared/LogoutButton'
 import SearchBar  from './SearchBar'
-import { LogoutButton } from '@/components/shared/LogoutButton'
 import MegaMenu   from './MegaMenu'
-import { LogoutButton } from '@/components/shared/LogoutButton'
 import ThemeToggle from './ThemeToggle'
-import { LogoutButton } from '@/components/shared/LogoutButton'
 import { navLinks } from '@/lib/design-tokens'
-import { LogoutButton } from '@/components/shared/LogoutButton'
 
 export default function Header() {
   const [scrolled,    setScrolled]    = useState(false)
@@ -72,11 +65,11 @@ export default function Header() {
             <div className="flex items-center gap-0.5 mr-auto">
               <SearchBar />
               <ThemeToggle />
-              <Link href="/ar/account/wishlist" aria-label="المفضلة"
+              <Link href="/ar/account/wishlist" aria-label="Ø§Ù„Ù…ÙØ¶Ù„Ø©"
                 className="p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
                 <Heart size={18} />
               </Link>
-              <Link href="/ar/cart" aria-label="السلة"
+              <Link href="/ar/cart" aria-label="Ø§Ù„Ø³Ù„Ø©"
                 className="relative p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
                 <ShoppingBag size={18} />
                 {cartCount > 0 && (
@@ -85,7 +78,7 @@ export default function Header() {
                   </span>
                 )}
               </Link>
-              <Link href="/ar/auth/login" aria-label="حسابي"
+              <Link href="/ar/auth/login" aria-label="Ø­Ø³Ø§Ø¨ÙŠ"
                 className="p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
                 <User size={18} />
               </Link>

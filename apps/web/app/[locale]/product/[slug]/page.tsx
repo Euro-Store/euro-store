@@ -27,7 +27,7 @@ const mockColors = [
 export default function ProductDetailPage() {
   const params  = useParams()
   const slug    = params?.slug as string
-  const product = (mockProducts as any[]).find(p => p.id === slug) ?? (mockProducts as any[])[0]
+  const product = (mockProducts as unknown as any[]).find(p => p.id === slug) ?? (mockProducts as unknown as any[])[0]
   const [wishlisted,  setWishlisted]  = useState(false)
   const [addedToCart, setAddedToCart] = useState(false)
   const f = (n: number) => n.toLocaleString('ar-SY') + ' ل.س'

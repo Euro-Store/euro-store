@@ -10,7 +10,7 @@ import { Search } from 'lucide-react'
 function SearchResults() {
   const q = useSearchParams().get('q') ?? ''
   const results = q.trim()
-    ? (mockProducts as any[]).filter(p => p.name.includes(q) || p.brand.toLowerCase().includes(q.toLowerCase()))
+    ? (mockProducts as unknown as any[]).filter(p => p.name.includes(q) || p.brand.toLowerCase().includes(q.toLowerCase()))
     : []
   return (
     <div>

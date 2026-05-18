@@ -1,18 +1,22 @@
 ﻿import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { authApi, type User, type RegisterInput } from '@/lib/api-client'
 
-interface AuthState {
+export interface User {
+  id: string
+  email: string
+  name: string
+  phone?: string
+  role: 'CUSTOMER' | 'HELPER' | 'ADMIN'
+  avatarUrl?: string
+}
+
+export interface AuthState {
   user: User | null
   isLoggedIn: boolean
-  isLoading: boolean
-  error: string | null
-  login: (email: string, password: string) => Promise<void>
-  register: (data: RegisterInput) => Promise<void>
-  logout: () => Promise<void>
+  setUser: (user: User) => void
+  updateUser: (data: Partial<User>) => void
+  clearAuth: () => void
   fetchProfile: () => Promise<void>
-  updateUser: (u: Partial<User>) => void
-  clearError: () => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -20,53 +24,23 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isLoggedIn: false,
-      isLoading: false,
-      error: null,
-
-      login: async (email, password) => {
-        set({ isLoading: true, error: null })
-        try {
-          const { user } = await authApi.login(email, password)
-          set({ user, isLoggedIn: true, isLoading: false })
-        } catch (err: unknown) {
-          set({ error: err instanceof Error ? err.message : 'خطأ في تسجيل الدخول', isLoading: false })
-          throw err
-        }
-      },
-
-      register: async (data) => {
-        set({ isLoading: true, error: null })
-        try {
-          const { user } = await authApi.register(data)
-          set({ user, isLoggedIn: true, isLoading: false })
-        } catch (err: unknown) {
-          set({ error: err instanceof Error ? err.message : 'خطأ في إنشاء الحساب', isLoading: false })
-          throw err
-        }
-      },
-
-      logout: async () => {
-        set({ isLoading: true })
-        try { await authApi.logout() } catch { /* ignore */ }
-        set({ user: null, isLoggedIn: false, isLoading: false, error: null })
-      },
-
+      setUser: (user) => set({ user, isLoggedIn: true }),
+      updateUser: (data) => set((s) => ({ user: s.user ? { ...s.user, ...data } : null })),
+      clearAuth: () => set({ user: null, isLoggedIn: false }),
       fetchProfile: async () => {
         try {
-          const { user } = await authApi.profile()
-          set({ user, isLoggedIn: true })
+          const res = await fetch('/api/auth/me')
+          if (res.ok) {
+            const data = await res.json()
+            set({ user: data.user, isLoggedIn: true })
+          } else {
+            get().clearAuth()
+          }
         } catch {
-          if (get().isLoggedIn) set({ user: null, isLoggedIn: false })
+          // لا نفعل شيئاً إذا فشل الطلب
         }
       },
-
-      updateUser: (data) => {
-        const u = get().user
-        if (u) set({ user: { ...u, ...data } })
-      },
-
-      clearError: () => set({ error: null }),
     }),
-    { name: 'euro-auth', partialize: (s) => ({ user: s.user, isLoggedIn: s.isLoggedIn }) }
+    { name: 'euro-auth' }
   )
 )

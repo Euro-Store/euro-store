@@ -428,6 +428,50 @@ Helper                     Backend                 Admin
 ```
 
 ════════════════════════════════════════════════════════════════
+════════════════════════════════════════════════════════════════
+## 3E. AUTH GUARD FLOW — حماية الإجراءات للزوار
+════════════════════════════════════════════════════════════════
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              AUTH GUARD — الإجراءات المحمية                  │
+└─────────────────────────────────────────────────────────────┘
+
+  زائر غير مسجّل يضغط إجراءً محمياً (سلة / مفضلة / checkout)
+              │
+              ▼
+    ┌─────────────────────┐
+    │   isLoggedIn ?      │
+    └──────────┬──────────┘
+               │
+        ┌──────┴───────┐
+        │ YES           │ NO
+        ▼               ▼
+    ينفّذ الإجراء    يحفظ returnUrl في sessionStorage
+                     redirect → /[locale]/auth/login?return=...
+                                 │
+                                 ▼ (بعد نجاح تسجيل الدخول)
+                     redirect ← returnUrl المحفوظ
+
+الإجراءات المحمية وتحويلاتها:
+┌──────────────────────────────────────────────────────────────┐
+│  الإجراء               │ redirect URL                        │
+├────────────────────────┼─────────────────────────────────────┤
+│ إضافة للسلة            │ ?return=/[locale]/cart              │
+│ إضافة للمفضلة          │ ?return=[current-page]              │
+│ Checkout               │ ?return=/[locale]/checkout          │
+│ طلب استبدال            │ ?return=/[locale]/account/exchange  │
+│ استخدام نقاط الولاء    │ ?return=/[locale]/account/loyalty   │
+│ كتابة تقييم            │ ?return=[product-page]              │
+└────────────────────────┴─────────────────────────────────────┘
+
+التقنية:
+  Web:    useAuthGuard() hook ← يقرأ Zustand authStore.isLoggedIn
+          middleware.ts ← يحمي /checkout + /account/* تلقائياً
+  Mobile: AuthStack ↔ MainTabs ← React Navigation يتولى الحماية تلقائياً
+```
+
+════════════════════════════════════════════════════════════════
 ## 4. COMPONENT TREE — شجرة المكونات (Web)
 ════════════════════════════════════════════════════════════════
 
@@ -447,7 +491,8 @@ Helper                     Backend                 Admin
     │   ├── <LocaleSwitcher />
     │   ├── <WishlistIcon count={n} />
     │   ├── <CartIcon count={n} />
-    │   └── <AccountIcon />
+    │   ├── <AccountIcon />
+│   └── <LogoutButton />           ← يظهر فقط عند تسجيل الدخول
     │
     ├── {children}
     ├── <MobileNav> ...
@@ -465,8 +510,8 @@ Helper                     Backend                 Admin
 │   ├── <PriceBlock> ...
 │   ├── <ColorPicker> ...
 │   ├── <SizePicker> ...
-│   ├── <AddToCartButton />
-│   ├── <WishlistButton />
+│   ├── <AddToCartButton />        ← زائر غير مسجل: redirect → /auth/login
+│   ├── <WishlistButton />         ← زائر غير مسجل: redirect → /auth/login
 │   └── <DeliveryInfo />
 ├── <ProductTabs> ...
 ├── <ReviewsSection> ...
@@ -821,12 +866,13 @@ Rules:
 │  CSS Variables (globals.css):                              │
 │                                                             │
 │  :root {                    .dark {                        │
-│    --bg-base: #f7f5ef;        --bg-base: #0a0a0a;         │
-│    --bg-surface: #ffffff;     --bg-surface: #121212;       │
-│    --text-main: #111111;      --text-main: #f5f5f5;        │
-│    --text-muted: #6b7280;     --text-muted: #a0a0a0;       │
-│    --border: #e5e7eb;         --border: #2a2a2a;           │
-│    --gold: #d4a017;           --gold: #d4a017;  ← ثابت!   │
+│    --bg-base: #fafaf8;        --bg-base: #0d0d0d;         │
+│    --bg-surface: #ffffff;     --bg-surface: #161616;       │
+│    --text-main: #0d0d0d;      --text-main: #f0eeeb;        │
+│    --text-muted: #4a4a4a;     --text-muted: #9e9e9e;       │
+│    --border: #e8e8e8;         --border: #2c2c2c;           │
+│    --gold: #c9961a;           --gold: #c9961a;  ← ثابت!   │
+│    --accent: #c0282d;         --accent: #c0282d; ← ثابت!  │
 │  }                          }                              │
 │                                                             │
 │  Initial Load:                                             │

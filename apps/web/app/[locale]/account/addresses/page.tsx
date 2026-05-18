@@ -59,7 +59,7 @@ export default function AddressesPage() {
                     <div key={f.k} className={f.full ? 'col-span-2' : ''}>
                       <label className="block text-xs font-medium text-[#111111] dark:text-[#f5f5f5] mb-1">{f.label}</label>
                       <input type="text" required={f.req}
-                        value={(form as Record<string,unknown>)[f.k] as string}
+                        value={((form as unknown) as Record<string,unknown>)[f.k] as string}
                         onChange={e => setForm(x => ({ ...x, [f.k]: e.target.value }))}
                         className={inp} />
                     </div>

@@ -25,7 +25,7 @@ export default function CartPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
       <h1 className="text-2xl font-black text-light-text dark:text-dark-text mb-8">
-        سلة التسوق ({items.reduce((s,i)=>s+i.qty,0)} منتجات)
+        سلة التسوق ({items.reduce((s,i)=>s+i.quantity,0)} منتجات)
       </h1>
       <div className="grid md:grid-cols-[1fr_360px] gap-8">
         <div className="bg-light-surface dark:bg-dark-surface rounded-card border border-light-border dark:border-dark-border p-4 md:p-6">

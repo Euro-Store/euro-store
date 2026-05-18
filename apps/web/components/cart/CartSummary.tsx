@@ -12,7 +12,7 @@ export default function CartSummary() {
       <h3 className="text-base font-black text-light-text dark:text-dark-text mb-5">ملخص الطلب</h3>
       <div className="space-y-3 text-sm">
         <div className="flex justify-between text-light-muted dark:text-dark-muted">
-          <span>المجموع الفرعي ({items.reduce((s,i)=>s+i.qty,0)} منتجات)</span>
+          <span>المجموع الفرعي ({items.reduce((s,i)=>s+i.quantity,0)} منتجات)</span>
           <span>{f(subtotal)}</span>
         </div>
         <div className="flex justify-between text-light-muted dark:text-dark-muted">

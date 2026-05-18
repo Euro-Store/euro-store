@@ -5,45 +5,53 @@
 ## 1. COLOR SYSTEM — نظام الألوان
 ════════════════════════════════════════════════════════════════
 
-### Primary — الذهبي (لا يتغير بين الثيمين)
+### Primary — الذهبي (لا يتغير بين الثيمين) ← اللون القيادي الدائم
 ```
---color-gold:        #d4a017   ← primary actions, key borders
---color-gold-light:  #f2c94c   ← hover, glow, highlight
---color-gold-deep:   #a87400   ← pressed, active, dark badge
---color-gold-alpha:  #d4a01720 ← خلفية شبه شفافة للـ badges
-```
-
-### Dark Theme — الثيم الغامق
-```
-background:   #0a0a0a    ← أعمق — body
-surface:      #121212    ← بطاقات، panels
-elevated:     #1a1a1a    ← hover backgrounds
-border:       #2a2a2a    ← حدود البطاقات
-border-light: #3a3a3a    ← حدود خفيفة
-text-primary: #f5f5f5
-text-secondary:#a0a0a0
-text-muted:   #666666
+--color-gold:        #c9961a   ← primary actions, key borders  (أغمق قليلاً — أكثر فخامة)
+--color-gold-light:  #e8b84b   ← hover, glow, highlight
+--color-gold-deep:   #9c7213   ← pressed, active, dark badge
+--color-gold-alpha:  rgba(201,150,26,0.12) ← خلفية شبه شفافة للـ badges
 ```
 
-### Light Theme — الثيم الفاتح
+### Secondary Accent — الأحمر الفاشن (جديد)
 ```
-background:   #f7f5ef    ← warm white — body
+--color-accent:      #c0282d   ← Sale badges, urgent states, offers
+--color-accent-light:#e05257   ← hover on accent
+--color-accent-soft: #fff0f0   ← light background for sale areas
+--color-accent-dark: #8b1a1d   ← deep accent for dark theme
+```
+
+### Dark Theme — الثيم الغامق (محدّث — أكثر عمقاً وفخامة)
+```
+background:   #0d0d0d    ← rich deep black — body
+surface:      #161616    ← بطاقات، panels (أكثر دفئاً من #121212)
+elevated:     #1f1f1f    ← hover backgrounds
+border:       #2c2c2c    ← حدود البطاقات
+border-light: #383838    ← حدود خفيفة
+text-primary: #f0eeeb    ← warm white — أريح للعين من #f5f5f5 النقي
+text-secondary:#9e9e9e
+text-muted:   #5a5a5a
+```
+
+### Light Theme — الثيم الفاتح (محدّث — أنقى وأكثر احترافية)
+```
+background:   #fafaf8    ← crisp neutral white — body (أنظف من #f7f5ef)
 surface:      #ffffff    ← بطاقات، panels
-elevated:     #f0ede4    ← hover backgrounds
-border:       #e5e7eb    ← حدود البطاقات
-border-light: #eeeeee    ← حدود خفيفة
-text-primary: #111111
-text-secondary:#555555
-text-muted:   #9ca3af
+elevated:     #f3f0e8    ← hover backgrounds (دفء خفيف)
+border:       #e8e8e8    ← حدود البطاقات (أنعم)
+border-light: #f0f0f0    ← حدود خفيفة
+text-primary: #0d0d0d    ← أغمق وأثرى من #111111
+text-secondary:#4a4a4a
+text-muted:   #939393
 ```
 
 ### Semantic Colors
 ```
-success: #16a34a   ← متوفر، طلب مكتمل، نقاط مكتسبة
-warning: #f59e0b   ← تحذير، كمية محدودة، نقاط منتهية الصلاحية
-error:   #dc2626   ← خطأ، نفذ المخزون، كود خصم غير صالح
-info:    #0284c7   ← معلومات، حالة الاستبدال
-muted:   #6b7280   ← disabled, coming-soon elements
+success: #15803d   ← متوفر، طلب مكتمل، نقاط مكتسبة (أعمق وأوضح)
+warning: #d97706   ← تحذير، كمية محدودة، نقاط منتهية الصلاحية
+error:   #b91c1c   ← خطأ، نفذ المخزون، كود خصم غير صالح (أعمق)
+info:    #0369a1   ← معلومات، حالة الاستبدال
+muted:   #737373   ← disabled, coming-soon elements
 ```
 
 ════════════════════════════════════════════════════════════════
@@ -158,7 +166,21 @@ Interaction:
 ├─────────────────────────────────────────────────────────────┤
 │ [LOGO]    [Nav: رجالي نسائي ولادي أحذية شنط]              │  h=64px
 │           [              SEARCH BAR              ]          │
-│           [🌙][♡ 2][🛍 3][👤]                             │
+│           [🌙][♡ 2][🛍 3][👤 ▾]                           │
+│                          ↑                                  │
+│              Account Dropdown (عند الضغط):                 │
+│              ┌──────────────────────────────┐              │
+│              │  مرحباً، [اسم المستخدم]       │              │
+│              │  ─────────────────────────── │              │
+│              │  حسابي                        │              │
+│              │  طلباتي                       │              │
+│              │  نقاطي                        │              │
+│              │  المفضلة                      │              │
+│              │  ─────────────────────────── │              │
+│              │  🚪 تسجيل الخروج  ← [واضح]   │              │
+│              └──────────────────────────────┘              │
+│                                                             │
+│ [GUEST STATE]: يظهر "تسجيل الدخول | إنشاء حساب" بدل 👤    │
 ├─────────────────────────────────────────────────────────────┤
 │ MEGA MENU (on hover nav item):                              │
 │  ┌──────────────┬──────────────┬──────────────────────┐   │
@@ -342,6 +364,40 @@ CANCELLED → [✕ ملغى]          bg-error/10    text-error
   padding: 4px 8px;
   font-size: 11px;
 }
+```
+
+### Auth Guard — الحماية وإعادة التوجيه للزوار
+```
+قاعدة: أي إجراء يستدعي تسجيل البيانات في حساب المستخدم
+       يتطلب تسجيل الدخول أولاً — لا تنفّذ الإجراء بدونه.
+
+الإجراءات المحمية:
+┌─────────────────────────────────────────────────────────┐
+│ الإجراء                   → التصرف إذا لم يُسجّل دخول │
+├─────────────────────────────────────────────────────────┤
+│ ♡ إضافة للمفضلة           → redirect: /auth/login      │
+│ 🛍 إضافة للسلة            → redirect: /auth/login      │
+│ ✓ تأكيد الطلب (Checkout) → redirect: /auth/login      │
+│ ⭐ كتابة تقييم            → redirect: /auth/login      │
+│ 🔄 طلب استبدال           → redirect: /auth/login      │
+│ 🏷 استخدام نقاط الولاء   → redirect: /auth/login      │
+│ 📍 حفظ عنوان              → redirect: /auth/login      │
+└─────────────────────────────────────────────────────────┘
+
+التطبيق:
+- Web:    middleware.ts يحمي /account/* و /checkout/*
+          Actions (wishlist/cart) تفحص authStore.isLoggedIn
+          إذا false → router.push('/auth/login?redirect=[currentPath]')
+- Mobile: AuthStack يحجب TabNavigator بالكامل إذا لم يكن مُسجَّلاً
+          Tabs المحمية (Wishlist/Cart/Account) → navigate('Login') أولاً
+
+بعد تسجيل الدخول:
+  → إعادة التوجيه تلقائياً للصفحة التي كان فيها (redirectParam)
+  → الإجراء المطلوب يُنفَّذ فوراً دون إعادة تكرار
+
+Toast عند الإعادة:
+  "سجّل دخولك لإضافة المنتجات إلى المفضلة"
+  style: info — مدة: 3 ثوانٍ
 ```
 
 ════════════════════════════════════════════════════════════════

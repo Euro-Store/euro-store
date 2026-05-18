@@ -1,6 +1,5 @@
 ﻿import { NextResponse } from 'next/server'
-import { prisma } from '@euro-store/db'
-import { serverError } from '@/lib/auth/middleware'
+import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
@@ -11,14 +10,13 @@ export async function GET() {
         children: {
           where: { isActive: true },
           orderBy: { displayOrder: 'asc' },
-          select: { id: true, slug: true, nameAr: true, nameEn: true, image: true },
         },
-      },
-      select: {
-        id: true, slug: true, nameAr: true, nameEn: true, image: true,
-        children: true,
       },
     })
     return NextResponse.json({ categories })
-  } catch (e) { return serverError(e) }
+  } catch (error) {
+    console.error('Categories error:', error)
+    return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 })
+  }
 }
+

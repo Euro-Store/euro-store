@@ -46,31 +46,35 @@
 ## متطلبات الجهاز
 Node.js: 20+ | npm: 10+ | PowerShell: 5+
 
-## نظام الألوان الرسمي
+## نظام الألوان الرسمي (v2 — محدّث)
 ```
-PRIMARY GOLD      #d4a017    ← اللون الرئيسي دائماً
-GOLD LIGHT        #f2c94c    ← hover states, highlights
-GOLD DEEP         #a87400    ← active states, badges
-GOLD MUTED        #c9961440  ← خلفيات شبه شفافة
+PRIMARY GOLD      #c9961a    ← اللون الرئيسي الدائم (محدّث — أغمق وأفخم)
+GOLD LIGHT        #e8b84b    ← hover states, highlights
+GOLD DEEP         #9c7213    ← active states, badges
+GOLD MUTED        rgba(201,150,26,0.12) ← خلفيات شبه شفافة
 
-DARK BASE         #0a0a0a    ← أعمق خلفية داكنة
-DARK SURFACE      #121212    ← بطاقات وpanels داكنة
-DARK ELEVATED     #1a1a1a    ← hover على dark
-DARK BORDER       #2a2a2a    ← حدود في الداكن
-DARK TEXT MAIN    #f5f5f5
-DARK TEXT MUTED   #a0a0a0
+ACCENT RED        #c0282d    ← Sale badges, urgent states (جديد)
+ACCENT LIGHT      #e05257    ← hover on accent
+ACCENT SOFT       #fff0f0    ← background for sale sections
 
-LIGHT BASE        #f7f5ef    ← warm white — body
+DARK BASE         #0d0d0d    ← أعمق خلفية داكنة (محدّث)
+DARK SURFACE      #161616    ← بطاقات وpanels داكنة
+DARK ELEVATED     #1f1f1f    ← hover على dark
+DARK BORDER       #2c2c2c    ← حدود في الداكن
+DARK TEXT MAIN    #f0eeeb    ← warm white (أريح للعين)
+DARK TEXT MUTED   #9e9e9e
+
+LIGHT BASE        #fafaf8    ← crisp white (محدّث — أنظف)
 LIGHT SURFACE     #ffffff    ← بطاقات
-LIGHT ELEVATED    #f0ede4    ← hover على light
-LIGHT BORDER      #e5e7eb
-LIGHT TEXT MAIN   #111111
-LIGHT TEXT MUTED  #6b7280
+LIGHT ELEVATED    #f3f0e8    ← hover على light
+LIGHT BORDER      #e8e8e8
+LIGHT TEXT MAIN   #0d0d0d    ← أثرى من الأسود النقي
+LIGHT TEXT MUTED  #4a4a4a
 
-SUCCESS           #16a34a
-WARNING           #f59e0b
-ERROR             #dc2626
-INFO              #0284c7
+SUCCESS           #15803d
+WARNING           #d97706
+ERROR             #b91c1c
+INFO              #0369a1
 ```
 
 ## Design Tokens — بنية Tailwind
@@ -80,22 +84,28 @@ theme: {
   extend: {
     colors: {
       gold: {
-        DEFAULT: '#d4a017',
-        light:   '#f2c94c',
-        deep:    '#a87400',
-        muted:   '#c9961440',
+        DEFAULT: '#c9961a',    // محدّث
+        light:   '#e8b84b',
+        deep:    '#9c7213',
+        muted:   'rgba(201,150,26,0.12)',
+      },
+      accent: {
+        DEFAULT: '#c0282d',    // جديد — Sale / Urgent
+        light:   '#e05257',
+        soft:    '#fff0f0',
+        dark:    '#8b1a1d',
       },
       dark: {
-        base:    '#0a0a0a',
-        surface: '#121212',
-        elevated:'#1a1a1a',
-        border:  '#2a2a2a',
+        base:    '#0d0d0d',    // محدّث
+        surface: '#161616',
+        elevated:'#1f1f1f',
+        border:  '#2c2c2c',
       },
       light: {
-        base:    '#f7f5ef',
+        base:    '#fafaf8',    // محدّث
         surface: '#ffffff',
-        elevated:'#f0ede4',
-        border:  '#e5e7eb',
+        elevated:'#f3f0e8',
+        border:  '#e8e8e8',
       }
     },
     fontFamily: {

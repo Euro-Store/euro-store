@@ -1,23 +1,24 @@
-# Ã˜Â³Ã˜Â¬Ã™â€ž Ã˜Â§Ã™â€žÃ˜ÂªÃ™â€šÃ˜Â¯Ã™â€¦ Ã¢â‚¬â€ Euro Store v5
+# سجل التقدم — Euro Store v5
 
-## M1 Ã¢Å“â€œ | M2 Ã¢Å“â€œ | M2.5 Ã¢Å“â€œ | Mobile Foundation Ã¢Å“â€œ
-## M3 Ã¢Å“â€œ | M4 Ã¢Å“â€œ | M5 Ã¢Å“â€œ | M6 Ã¢Å“â€œ | M7 Ã¢Å“â€œ | M8 Ã¢Å“â€œ
+## M1 ✓ | M2 ✓ | M2.5 ✓ | Mobile Foundation ✓
+## M3 ✓ | M4 ✓ | M5 ✓ | M6 ✓ | M7 ✓ | M8 ✓ | M9 ✓
 
-## M9 Ã¢â‚¬â€ Deploy [Ã˜Â¬Ã˜Â§Ã˜Â±Ã™Â Ã¢Å“â€œ Ã¢â‚¬â€ API Routes + Config Ã˜Â¬Ã˜Â§Ã™â€¡Ã˜Â²Ã˜Â© Ã¢â‚¬â€ Ã™Å Ã˜Â­Ã˜ÂªÃ˜Â§Ã˜Â¬ Ã˜Â®Ã˜Â·Ã™Ë†Ã˜Â§Ã˜Âª Ã™Å Ã˜Â¯Ã™Ë†Ã™Å Ã˜Â©]
+## M9 — Deploy [مكتمل كلياً ✅]
 
-### Ã¢Å“â€¦ Ã™â€¦Ã˜Â§ Ã˜ÂªÃ™â€¦ Ã˜Â¥Ã™â€ Ã˜Â¬Ã˜Â§Ã˜Â²Ã™â€¡ Ã™ÂÃ™Å  M9
+### ✅ ما تم إنجازه في M9
 
-#### Ã˜Â§Ã™â€žÃ˜Â¨Ã™â€ Ã™Å Ã˜Â© Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â­Ã˜ÂªÃ™Å Ã˜Â©
-- [x] packages/db/prisma/schema.prisma (Schema Ã™Æ’Ã˜Â§Ã™â€¦Ã™â€ž Ã¢â‚¬â€ 15 model)
-- [x] packages/db/src/client.ts (Prisma Singleton Ã¢â‚¬â€ serverless-safe)
+#### البنية التحتية
+- [x] packages/db/prisma/schema.prisma (Schema كامل — 15 model)
+- [x] packages/db/src/client.ts (Prisma Singleton — serverless-safe)
 - [x] packages/db/package.json
-- [x] packages/shared/src/types/index.ts (TypeScript types Ã™â€¦Ã˜Â´Ã˜ÂªÃ˜Â±Ã™Æ’Ã˜Â©)
+- [x] packages/shared/src/types/index.ts (TypeScript types مشتركة)
 - [x] apps/web/lib/supabase/server.ts
 - [x] apps/web/lib/supabase/client.ts
 - [x] apps/web/lib/auth/middleware.ts (Auth + Role guards)
 - [x] apps/web/middleware.ts (Route Protection)
+- [x] @supabase/ssr مثبَّت في admin و helper ✅
 
-#### API Routes (34 Ã™â€¦Ã™â€žÃ™Â Ã¢â‚¬â€ Next.js Ã¢â€ â€™ Netlify Functions)
+#### API Routes (34 ملف — Next.js → Netlify Functions)
 - [x] /api/auth/login + register + logout + me + callback
 - [x] /api/products + /api/products/[slug]
 - [x] /api/categories + /api/search + /api/cart + /api/wishlist
@@ -26,63 +27,76 @@
 - [x] /api/exchange + /api/exchange/[id]
 - [x] /api/loyalty + /api/loyalty/earn + redeem + qr
 - [x] /api/discounts/validate
-- [x] /api/admin/products + [id] + orders + [id] + customers
-- [x] /api/admin/discounts + [id] + exchanges + [id]
-- [x] /api/admin/loyalty + helpers + partner-shops + analytics
+- [x] /api/admin/* (products, orders, customers, discounts, exchanges, loyalty, helpers, partner-shops, analytics)
 - [x] /api/helper/scan-qr + inventory + loyalty-earn
 
 #### Netlify + Supabase Config
-- [x] apps/web/netlify.toml
-- [x] apps/admin/netlify.toml
-- [x] apps/helper/netlify.toml
+- [x] netlify.toml في web + admin + helper
 - [x] supabase/rls-policies.sql
 - [x] supabase/storage-policies.sql
 - [x] supabase/initial-data.sql
-- [x] deploy/DEPLOY_GUIDE.md (9 Ã˜Â®Ã˜Â·Ã™Ë†Ã˜Â§Ã˜Âª Ã™â€¦Ã™ÂÃ˜ÂµÃ™â€˜Ã™â€žÃ˜Â©)
+- [x] deploy/DEPLOY_GUIDE.md
+- [x] .env.local مكتملة في الثلاثة apps ✅
 
-#### Ã™â€¦Ã˜Â´Ã˜Â§Ã™Æ’Ã™â€ž Ã˜Â­Ã™ÂÃ™â€žÃ™â€˜Ã˜Âª Ã™ÂÃ™Å  M9
-- [x] Ã˜Â®Ã˜Â·Ã˜Â£ BOM Ã™ÂÃ™Å  package.json Ã¢â‚¬â€ Ã˜Â§Ã™â€žÃ˜Â­Ã™â€ž: `[System.IO.File]::WriteAllText()` Ã˜Â¨Ã˜Â¯Ã™â€ž `Set-Content`
-- [x] Turbo recursive loop Ã¢â‚¬â€ Ã˜Â§Ã™â€žÃ˜Â­Ã™â€ž: Ã˜Â£Ã˜Â³Ã™â€¦Ã˜Â§Ã˜Â¡ Ã™â€¦Ã˜Â®Ã˜ÂªÃ™â€žÃ™ÂÃ˜Â© Ã™â€žÃ™â€žÃ™â‚¬ root scripts
-- [x] @supabase/ssr Ã˜ÂºÃ™Å Ã˜Â± Ã™â€¦Ã˜Â«Ã˜Â¨Ã™â€˜Ã˜Âª Ã¢â‚¬â€ Ã˜Â§Ã™â€žÃ˜Â­Ã™â€ž: `npm install @supabase/ssr @supabase/supabase-js`
-- [x] turbo ls Ã™Å Ã˜Â¸Ã™â€¡Ã˜Â± 0 packages Ã¢â‚¬â€ Ã˜Â§Ã™â€žÃ˜Â³Ã˜Â¨Ã˜Â¨: BOM Ã™ÂÃ™Å  package.jsonÃ˜Å’ Ã˜Â­Ã™ÂÃ™â€žÃ™â€˜
+#### Auth Guard + Logout
+- [x] hooks/useAuthGuard.ts — يحمي الإجراءات ويحفظ returnUrl ✅
+- [x] components/shared/LogoutButton.tsx — يظهر فقط للمسجلين ✅
+- [x] components/product/AddToCartButton.tsx — مع auth guard ✅
+- [x] components/product/WishlistButton.tsx — مع auth guard ✅
+- [x] store/authStore.ts — محدّث مع clearAuth() ✅
+- [x] app/[locale]/auth/login/page.tsx — مع returnUrl handling ✅
+- [x] Prisma generate + db push ✅
 
-#### Ã˜Â­Ã˜Â§Ã™â€žÃ˜Â© Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â´Ã˜ÂºÃ™Å Ã™â€ž Ã˜Â§Ã™â€žÃ™â€¦Ã˜Â­Ã™â€žÃ™Å  Ã¢Å“â€¦
-- Web Ã™Å Ã˜Â¹Ã™â€¦Ã™â€ž: `cd apps/web && npx next dev` Ã¢â€ â€™ http://localhost:3000
-- Ã˜Â§Ã™â€žÃ˜ÂµÃ™ÂÃ˜Â­Ã˜Â§Ã˜Âª Ã˜ÂªÃ™ÂÃ˜Â­Ã™â€¦Ã™Å½Ã™â€˜Ã™â€ž: /ar Ã¢Å“â€œ | /ar/[category] Ã¢Å“â€œ | /ar/product/[slug] Ã¢Å“â€œ | /ar/auth/login Ã¢Å“â€œ | /ar/cart Ã¢Å“â€œ
+#### النشر على Netlify ✅ (مكتمل)
+- [x] Web:    https://eurostoreweb.netlify.app ✅
+- [x] Admin:  https://eurostoreadmin.netlify.app ✅
+- [x] Helper: https://eurostorehelper.netlify.app ✅
+- [x] ENV vars مضافة في Netlify Dashboard للثلاثة sites ✅
+- [x] pages/_document.tsx مُضاف في admin و helper ✅
 
----
-
-### Ã¢ÂÂ³ Ã˜Â®Ã˜Â·Ã™Ë†Ã˜Â§Ã˜Âª Ã™Å Ã˜Â¯Ã™Ë†Ã™Å Ã˜Â© Ã™â€¦Ã˜ÂªÃ˜Â¨Ã™â€šÃ™Å Ã˜Â© (Ã˜Â¨Ã˜Â§Ã™â€žÃ˜ÂªÃ˜Â±Ã˜ÂªÃ™Å Ã˜Â¨)
-
-1. **Ã˜ÂªÃ˜Â«Ã˜Â¨Ã™Å Ã˜Âª @supabase/ssr Ã™ÂÃ™Å  admin Ã™Ë† helper**
-   ```powershell
-   cd "D:\Files\Programming_Projects\Euro Store\apps\admin"
-   npm install @supabase/ssr @supabase/supabase-js
-   cd "..\helper"
-   npm install @supabase/ssr @supabase/supabase-js
-   ```
-
-2. **Ã˜Â¥Ã˜Â¹Ã˜Â¯Ã˜Â§Ã˜Â¯ Supabase**
-   - Ã˜Â¥Ã™â€ Ã˜Â´Ã˜Â§Ã˜Â¡ project Ã˜Â¹Ã™â€žÃ™â€° supabase.com
-   - Ã™â€ Ã˜Â³Ã˜Â®: URL + ANON_KEY + SERVICE_ROLE_KEY + JWT_SECRET
-   - `cd packages/db && npx prisma generate && npx prisma db push`
-   - Ã˜ÂªÃ˜Â´Ã˜ÂºÃ™Å Ã™â€ž SQL files Ã™ÂÃ™Å  Supabase SQL Editor (rls + storage + initial-data)
-
-3. **Ã˜ÂªÃ˜Â¹Ã˜Â¨Ã˜Â¦Ã˜Â© Ã™â€¦Ã™â€žÃ™ÂÃ˜Â§Ã˜Âª .env.local**
-   - apps/web/.env.local + apps/admin/.env.local + apps/helper/.env.local
-
-4. **Ã˜Â¥Ã˜Â¹Ã˜Â¯Ã˜Â§Ã˜Â¯ Google OAuth**
-   - Google Cloud Console Ã¢â€ â€™ OAuth 2.0 Credentials
-   - Supabase Auth Providers Ã¢â€ â€™ Google Ã¢â€ â€™ Ã˜ÂªÃ™ÂÃ˜Â¹Ã™Å Ã™â€ž
-
-5. **Ã˜Â§Ã™â€žÃ™â€ Ã˜Â´Ã˜Â± Ã˜Â¹Ã™â€žÃ™â€° Netlify**
-   - 3 sites Ã™â€¦Ã™â€ Ã™ÂÃ˜ÂµÃ™â€žÃ˜Â© (web / admin / helper)
-   - ENV vars Ã™â€žÃ™Æ’Ã™â€ž site
-   - @netlify/plugin-nextjs Ã™ÂÃ™Å  Ã™Æ’Ã™â€ž site
-
-6. **Ã˜Â§Ã˜Â®Ã˜ÂªÃ˜Â¨Ã˜Â§Ã˜Â± E2E Ã™Æ’Ã˜Â§Ã™â€¦Ã™â€ž** (8 Ã˜Â³Ã™Å Ã™â€ Ã˜Â§Ã˜Â±Ã™Å Ã™Ë†Ã™â€¡Ã˜Â§Ã˜Âª Ã™ÂÃ™Å  deploy/DEPLOY_GUIDE.md)
+#### تحذير حرج مكتشف — netlify.toml للـ monorepo
+المشكلة: عند البناء المحلي عبر Netlify CLI في monorepo، NODE_ENV لا يُعيَّن production تلقائياً
+فيلود react-dom development version ويكسر prerender صفحات Pages Router.
+الحل المثبَّت في netlify.toml لـ admin:
+```toml
+[build]
+  command = "set NODE_ENV=production && npx next build"
+  publish = ".next"
+```
 
 ---
 
-## Ã˜Â¢Ã˜Â®Ã˜Â± Ã˜ÂªÃ˜Â­Ã˜Â¯Ã™Å Ã˜Â«: 2026-05-18
-## Ã˜Â§Ã™â€žÃ˜Â­Ã˜Â§Ã™â€žÃ˜Â©: Web Ã™Å Ã˜Â¹Ã™â€¦Ã™â€ž Ã™â€¦Ã˜Â­Ã™â€žÃ™Å Ã˜Â§Ã™â€¹ Ã¢Å“â€¦ | API Routes Ã˜Â¬Ã˜Â§Ã™â€¡Ã˜Â²Ã˜Â© Ã¢Å“â€¦ | Supabase + Netlify Ã¢ÂÂ³
+### ⏳ خطوات يدوية متبقية
+
+1. **تشغيل SQL في Supabase SQL Editor** (بالترتيب):
+   - supabase/rls-policies.sql
+   - supabase/storage-policies.sql
+   - supabase/initial-data.sql
+
+2. **إعداد Google OAuth**:
+   - Google Cloud Console → OAuth 2.0 Credentials
+   - Authorized redirect URI: https://[PROJECT-REF].supabase.co/auth/v1/callback
+   - Supabase → Auth → Providers → Google → تفعيل
+   - Supabase → Auth → URL Config:
+     - Site URL: https://eurostoreweb.netlify.app
+     - Redirect URLs: https://eurostoreweb.netlify.app/api/auth/callback
+                      https://eurostoreadmin.netlify.app/api/auth/callback
+                      https://eurostorehelper.netlify.app/api/auth/callback
+
+3. **إضافة LogoutButton في Header**:
+   - افتح apps/web/components/layout/Header.tsx
+   - استورد: `import { LogoutButton } from '@/components/shared/LogoutButton'`
+   - ضعه في قسم الـ user actions بجانب أيقونات الحساب
+
+4. **اختبار E2E** (الخطوة التالية الرئيسية):
+   - تسجيل + تسجيل دخول (Email + Google)
+   - تصفح منتجات + فلاتر
+   - سلة + Checkout + كود خصم + نقاط
+   - طلب استبدال + QR
+   - Admin dashboard
+   - Helper portal + مسح QR
+
+---
+
+## آخر تحديث: 2026-05-18
+## الحالة: Web ✅ | Admin ✅ | Helper ✅ | Supabase SQL ⏳ | Google OAuth ⏳ | E2E Test ⏳

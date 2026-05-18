@@ -1,106 +1,167 @@
 ﻿'use client'
+
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useAuthStore } from '@/store/authStore'
-import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
-  const [email, setEmail]       = useState('')
-  const [password, setPassword] = useState('')
-  const [showPwd, setShowPwd]   = useState(false)
-  const [googleLoading, setGoogleLoading] = useState(false)
-  const { login, isLoading, error, clearError, isLoggedIn } = useAuthStore()
-  const router       = useRouter()
+  const router = useRouter()
   const searchParams = useSearchParams()
-  const redirect     = searchParams.get('redirect') || '/ar/account'
+  const { setUser, isLoggedIn } = useAuthStore()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  useEffect(() => { if (isLoggedIn) router.replace(redirect) }, [isLoggedIn])
-  useEffect(() => () => { clearError() }, [])
+  // إذا كان مسجلاً دخوله → حوّله فوراً
+  useEffect(() => {
+    if (isLoggedIn) {
+      const returnUrl =
+        (typeof window !== 'undefined' && sessionStorage.getItem('returnUrl')) ||
+        searchParams.get('return') ||
+        '/'
+      sessionStorage.removeItem('returnUrl')
+      router.replace(returnUrl)
+    }
+  }, [isLoggedIn, router, searchParams])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    clearError()
-    try { await login(email, password); router.push(redirect) } catch {}
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'خطأ في تسجيل الدخول')
+      setUser(data.user)
+      // العودة للصفحة المطلوبة
+      const returnUrl =
+        (typeof window !== 'undefined' && sessionStorage.getItem('returnUrl')) ||
+        searchParams.get('return') ||
+        '/'
+      sessionStorage.removeItem('returnUrl')
+      router.replace(returnUrl)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'خطأ غير متوقع')
+    } finally {
+      setLoading(false)
+    }
   }
-
-  const handleGoogle = async () => {
-    setGoogleLoading(true)
-    const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/api/auth/callback` }
-    })
-  }
-
-  const inp = 'w-full px-4 py-3 rounded-[8px] bg-[#f7f5ef] dark:bg-[#1a1a1a] border border-[#e5e7eb] dark:border-[#2a2a2a] text-[#111111] dark:text-[#f5f5f5] placeholder-[#9ca3af] focus:outline-none focus:ring-2 focus:ring-[#d4a017]/40 focus:border-[#d4a017] transition-all text-sm'
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#0a0a0a] flex items-center justify-center px-4 py-12" dir="rtl">
+    <main className="min-h-screen flex items-center justify-center bg-light-base dark:bg-dark-base px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <Link href="/ar"><span className="text-[2.4rem] font-extrabold tracking-tight text-[#d4a017]">Euro Store</span></Link>
-          <p className="mt-2 text-[#6b7280] dark:text-[#a0a0a0] text-sm">مرحباً بعودتك</p>
+        {/* الشعار */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gold">Euro Store</h1>
+          <p className="mt-2 text-sm text-light-text-muted dark:text-dark-text-muted">
+            سجّل دخولك للمتابعة
+          </p>
         </div>
-        <div className="bg-white dark:bg-[#121212] rounded-[12px] border border-[#e5e7eb] dark:border-[#2a2a2a] shadow-sm p-8">
+
+        {/* بطاقة النموذج */}
+        <div className="bg-light-surface dark:bg-dark-surface rounded-card shadow-lg p-8">
           {error && (
-            <div className="mb-5 px-4 py-3 rounded-[8px] bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm text-center">{error}</div>
+            <div className="mb-4 p-3 rounded-btn bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm">
+              {error}
+            </div>
           )}
 
-          {/* Google Login */}
-          <button onClick={handleGoogle} disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-3 py-3 rounded-[8px] border border-[#e5e7eb] dark:border-[#2a2a2a] bg-white dark:bg-[#1a1a1a] hover:bg-[#f7f5ef] dark:hover:bg-[#222] text-[#111111] dark:text-[#f5f5f5] font-medium text-sm transition-all disabled:opacity-50 mb-5">
-            <svg width="18" height="18" viewBox="0 0 48 48">
-              <path fill="#FFC107" d="M43.6 20H24v8h11.3C33.6 32.4 29.2 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.1 29 5 24 5 13 5 4 14 4 24s9 19 20 19c10 0 19-7 19-19 0-1.3-.1-2.7-.4-4z"/>
-              <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.5 16 19 13 24 13c2.8 0 5.3 1 7.2 2.7l5.7-5.7C33.5 7.1 29 5 24 5c-7.7 0-14.3 4.3-17.7 9.7z"/>
-              <path fill="#4CAF50" d="M24 43c5 0 9.5-1.9 12.9-5l-6-5C29.2 34.4 26.7 35 24 35c-5.2 0-9.6-2.6-11.3-6H6.4C9.7 38.6 16.4 43 24 43z"/>
-              <path fill="#1976D2" d="M43.6 20H24v8h11.3c-.8 2.3-2.3 4.2-4.3 5.5l6 5c3.5-3.2 5.9-8 5.9-14.5 0-1.3-.1-2.7-.3-4z"/>
-            </svg>
-            {googleLoading ? 'جارٍ التحويل...' : 'تسجيل الدخول بـ Google'}
-          </button>
-
-          <div className="flex items-center gap-3 mb-5">
-            <div className="flex-1 h-px bg-[#e5e7eb] dark:bg-[#2a2a2a]"></div>
-            <span className="text-xs text-[#9ca3af]">أو</span>
-            <div className="flex-1 h-px bg-[#e5e7eb] dark:bg-[#2a2a2a]"></div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+          <form onSubmit={handleLogin} className="space-y-5" dir="rtl">
             <div>
-              <label className="block text-sm font-medium text-[#111111] dark:text-[#f5f5f5] mb-2">البريد الإلكتروني</label>
-              <input type="email" autoComplete="email" required dir="ltr"
-                value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com" className={inp} />
+              <label className="block text-sm font-medium mb-1">البريد الإلكتروني</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="example@email.com"
+                className="
+                  w-full px-4 py-2.5 rounded-btn border
+                  border-light-border dark:border-dark-border
+                  bg-light-base dark:bg-dark-elevated
+                  focus:outline-none focus:ring-2 focus:ring-gold
+                  text-sm
+                "
+              />
             </div>
+
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-[#111111] dark:text-[#f5f5f5]">كلمة المرور</label>
-                <Link href="/ar/auth/forgot-password" className="text-xs text-[#d4a017] hover:text-[#a87400] transition-colors">نسيت كلمة المرور؟</Link>
-              </div>
-              <div className="relative">
-                <input type={showPwd ? 'text' : 'password'} autoComplete="current-password" required dir="ltr"
-                  value={password} onChange={e => setPassword(e.target.value)}
-                  placeholder="••••••••" className={`${inp} pl-11`} />
-                <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9ca3af] hover:text-[#d4a017] transition-colors text-base leading-none">
-                  {showPwd ? '🙈' : '👁'}
-                </button>
-              </div>
+              <label className="block text-sm font-medium mb-1">كلمة المرور</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="
+                  w-full px-4 py-2.5 rounded-btn border
+                  border-light-border dark:border-dark-border
+                  bg-light-base dark:bg-dark-elevated
+                  focus:outline-none focus:ring-2 focus:ring-gold
+                  text-sm
+                "
+              />
             </div>
-            <button type="submit" disabled={isLoading || !email || !password}
-              className="w-full py-3 rounded-[8px] bg-[#d4a017] hover:bg-[#a87400] text-white font-semibold text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-              {isLoading ? 'جارٍ تسجيل الدخول...' : 'تسجيل الدخول'}
+
+            <div className="flex items-center justify-between text-sm">
+              <Link href="/auth/forgot-password" className="text-gold hover:underline">
+                نسيت كلمة المرور؟
+              </Link>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="
+                w-full py-3 rounded-btn font-semibold text-sm
+                bg-gold text-dark-base
+                hover:bg-gold-light active:scale-95
+                disabled:opacity-60 disabled:cursor-not-allowed
+                transition-all
+              "
+            >
+              {loading ? 'جارٍ تسجيل الدخول...' : 'تسجيل الدخول'}
             </button>
           </form>
-          <div className="mt-6 pt-6 border-t border-[#e5e7eb] dark:border-[#2a2a2a] text-center">
-            <p className="text-sm text-[#6b7280] dark:text-[#a0a0a0]">
-              ليس لديك حساب؟{' '}
-              <Link href="/ar/auth/register" className="text-[#d4a017] font-semibold hover:text-[#a87400] transition-colors">إنشاء حساب جديد</Link>
-            </p>
+
+          {/* Google OAuth */}
+          <div className="mt-4">
+            <div className="relative flex items-center gap-3 my-4">
+              <div className="flex-1 h-px bg-light-border dark:bg-dark-border" />
+              <span className="text-xs text-light-text-muted dark:text-dark-text-muted">أو</span>
+              <div className="flex-1 h-px bg-light-border dark:bg-dark-border" />
+            </div>
+            <a
+              href="/api/auth/callback?provider=google"
+              className="
+                flex items-center justify-center gap-3 w-full py-2.5 rounded-btn
+                border border-light-border dark:border-dark-border
+                hover:bg-light-elevated dark:hover:bg-dark-elevated
+                text-sm font-medium transition-colors
+              "
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              المتابعة مع Google
+            </a>
           </div>
-        </div>
-        <div className="mt-6 text-center">
-          <Link href="/ar" className="text-sm text-[#6b7280] hover:text-[#d4a017] transition-colors">← العودة للصفحة الرئيسية</Link>
+
+          <p className="mt-6 text-center text-sm text-light-text-muted dark:text-dark-text-muted">
+            ليس لديك حساب؟{' '}
+            <Link href="/auth/register" className="text-gold font-medium hover:underline">
+              إنشاء حساب
+            </Link>
+          </p>
         </div>
       </div>
     </main>

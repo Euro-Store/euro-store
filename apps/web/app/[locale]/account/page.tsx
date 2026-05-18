@@ -12,8 +12,8 @@ const QUICK = [
 ]
 
 export default function AccountPage() {
-  const { user, fetchProfile } = useAuthStore()
-  useEffect(() => { fetchProfile() }, [])
+  const { user } = useAuthStore()
+  
 
   return (
     <div className="min-h-screen bg-[#f7f5ef] dark:bg-[#0a0a0a] py-8 px-4" dir="rtl">

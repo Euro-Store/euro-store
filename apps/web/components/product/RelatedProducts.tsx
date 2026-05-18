@@ -2,7 +2,7 @@
 import ProductCard from './Card'
 interface Props { currentId: string; category: string }
 export default function RelatedProducts({ currentId, category }: Props) {
-  const related = (mockProducts as any[]).filter(p => p.category === category && p.id !== currentId).slice(0, 4)
+  const related = (mockProducts as unknown as any[]).filter(p => p.category === category && p.id !== currentId).slice(0, 4)
   if (!related.length) return null
   return (
     <div className="border-t border-light-border dark:border-dark-border pt-12">

@@ -9,3 +9,6 @@ dist
 .expo
 android
 ios
+
+# Local Netlify folder
+.netlify

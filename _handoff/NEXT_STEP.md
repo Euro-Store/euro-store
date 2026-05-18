@@ -1,15 +1,15 @@
-# Ø§Ù„Ø®Ø·ÙˆØ© Ø§Ù„ØªØ§Ù„ÙŠØ© â€” M9 (Ù…ØªØ§Ø¨Ø¹Ø©): Ø¥Ø¹Ø¯Ø§Ø¯ Supabase + Netlify Deploy
+# الخطوة التالية — M9 (متابعة): إعداد Supabase + Netlify Deploy
 
-## Ø§Ù„ÙˆØ¶Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ
-- âœ… Web ÙŠØ¹Ù…Ù„ Ù…Ø­Ù„ÙŠØ§Ù‹ Ø¹Ù„Ù‰ http://localhost:3000
-- âœ… API Routes (34 Ù…Ù„Ù) Ø¬Ø§Ù‡Ø²Ø©
-- âœ… Prisma Schema ÙƒØ§Ù…Ù„ (15 model)
-- â³ Supabase Ù„Ù… ÙŠÙØ¹Ø¯Ù‘ Ø¨Ø¹Ø¯ (Ù„Ø§ DB Ø­Ù‚ÙŠÙ‚ÙŠØŒ Ù„Ø§ Auth)
-- â³ Netlify Ù„Ù… ÙŠÙÙ†Ø´Ø± Ø¨Ø¹Ø¯
+## الوضع الحالي
+- ✅ Web يعمل محلياً على http://localhost:3000
+- ✅ API Routes (34 ملف) جاهزة
+- ✅ Prisma Schema كامل (15 model)
+- ⏳ Supabase لم يُعدّ بعد (لا DB حقيقي، لا Auth)
+- ⏳ Netlify لم يُنشر بعد
 
-## Ø§Ù„Ø®Ø·ÙˆØ§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ© Ø¨Ø§Ù„ØªØ±ØªÙŠØ¨
+## الخطوات المتبقية بالترتيب
 
-### Ø§Ù„Ø®Ø·ÙˆØ© 1 â€” ØªØ«Ø¨ÙŠØª @supabase/ssr ÙÙŠ admin Ùˆ helper
+### الخطوة 1 — تثبيت @supabase/ssr في admin و helper
 ```powershell
 $A = "D:\Files\Programming_Projects\Euro Store"
 
@@ -20,31 +20,31 @@ cd "$A\apps\helper"
 npm install @supabase/ssr @supabase/supabase-js
 ```
 
-### Ø§Ù„Ø®Ø·ÙˆØ© 2 â€” Ø¥Ø¹Ø¯Ø§Ø¯ Supabase (ÙŠØ¯ÙˆÙŠ)
+### الخطوة 2 — إعداد Supabase (يدوي)
 ```
-1. Ø§Ø°Ù‡Ø¨ Ø¥Ù„Ù‰ https://supabase.com â†’ New Project
-2. Ø§Ø®ØªØ± Region: EU West (Frankfurt)
-3. Ù…Ù† Settings > API Ø§Ù†Ø³Ø®:
+1. اذهب إلى https://supabase.com → New Project
+2. اختر Region: EU West (Frankfurt)
+3. من Settings > API انسخ:
    NEXT_PUBLIC_SUPABASE_URL
    NEXT_PUBLIC_SUPABASE_ANON_KEY
    SUPABASE_SERVICE_ROLE_KEY
-4. Ù…Ù† Settings > Database > Connection String (Nodejs):
-   DATABASE_URL  â† port 6543 (pgBouncer)
-   DIRECT_URL    â† port 5432 (migrations)
+4. من Settings > Database > Connection String (Nodejs):
+   DATABASE_URL  ← port 6543 (pgBouncer)
+   DIRECT_URL    ← port 5432 (migrations)
 ```
 
-### Ø§Ù„Ø®Ø·ÙˆØ© 3 â€” ØªØ´ØºÙŠÙ„ Prisma
+### الخطوة 3 — تشغيل Prisma
 ```powershell
 $A = "D:\Files\Programming_Projects\Euro Store"
 cd "$A\packages\db"
 
-# Ø£Ø¶Ù DATABASE_URL Ùˆ DIRECT_URL ÙÙŠ packages/db/.env Ø£ÙˆÙ„Ø§Ù‹
+# أضف DATABASE_URL و DIRECT_URL في packages/db/.env أولاً
 npx prisma generate
 npx prisma db push
 ```
 
-### Ø§Ù„Ø®Ø·ÙˆØ© 4 â€” ØªØ¹Ø¨Ø¦Ø© .env.local
-Ø£Ù†Ø´Ø¦ Ù‡Ø°Ù‡ Ø§Ù„Ù…Ù„ÙØ§Øª ÙÙŠ apps/web + apps/admin + apps/helper:
+### الخطوة 4 — تعبئة .env.local
+أنشئ هذه الملفات في apps/web + apps/admin + apps/helper:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
@@ -55,82 +55,109 @@ NODE_ENV=development
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-### Ø§Ù„Ø®Ø·ÙˆØ© 5 â€” ØªØ´ØºÙŠÙ„ SQL ÙÙŠ Supabase SQL Editor
-Ø´ØºÙ‘Ù„ Ø¨Ø§Ù„ØªØ±ØªÙŠØ¨:
+### الخطوة 5 — تشغيل SQL في Supabase SQL Editor
+شغّل بالترتيب:
 1. supabase/rls-policies.sql
 2. supabase/storage-policies.sql
 3. supabase/initial-data.sql
 
-### Ø§Ù„Ø®Ø·ÙˆØ© 6 â€” Google OAuth
+### الخطوة 6 — Google OAuth
 ```
-1. console.cloud.google.com â†’ APIs & Services â†’ Credentials
-2. Create OAuth 2.0 Client ID â†’ Web application
+1. console.cloud.google.com → APIs & Services → Credentials
+2. Create OAuth 2.0 Client ID → Web application
 3. Authorized redirect URI: https://[PROJECT-REF].supabase.co/auth/v1/callback
-4. Supabase â†’ Auth â†’ Providers â†’ Google â†’ Enable + Client ID + Secret
-5. Supabase â†’ Auth â†’ URL Config:
-   Site URL: http://localhost:3000 (ØªØ·ÙˆÙŠØ±) Ø£Ùˆ https://[site].netlify.app (Ø¥Ù†ØªØ§Ø¬)
+4. Supabase → Auth → Providers → Google → Enable + Client ID + Secret
+5. Supabase → Auth → URL Config:
+   Site URL: http://localhost:3000 (تطوير) أو https://[site].netlify.app (إنتاج)
    Redirect URLs: http://localhost:3000/api/auth/callback
 ```
 
-### Ø§Ù„Ø®Ø·ÙˆØ© 7 â€” Deploy Ø¹Ù„Ù‰ Netlify
+### الخطوة 7 — Deploy على Netlify
 ```
-1. Ø§Ø±ÙØ¹ Ø§Ù„Ù…Ø´Ø±ÙˆØ¹ Ø¹Ù„Ù‰ GitHub (Ø¥Ø°Ø§ Ù„Ù… ÙŠÙƒÙ† Ù…ÙˆØ¬ÙˆØ¯Ø§Ù‹)
-2. netlify.com â†’ Add new site â†’ Import from GitHub
+1. ارفع المشروع على GitHub (إذا لم يكن موجوداً)
+2. netlify.com → Add new site → Import from GitHub
 3. Site 1 (Web):
    Base: apps/web | Build: next build | Publish: .next
 4. Site 2 (Admin):
    Base: apps/admin | Build: next build | Publish: .next
 5. Site 3 (Helper):
    Base: apps/helper | Build: next build | Publish: .next
-6. Ø£Ø¶Ù ENV vars Ù„ÙƒÙ„ site Ù…Ù† Netlify Dashboard
-7. ØªØ«Ø¨ÙŠØª @netlify/plugin-nextjs ÙÙŠ ÙƒÙ„ site
+6. أضف ENV vars لكل site من Netlify Dashboard
+7. تثبيت @netlify/plugin-nextjs في كل site
 ```
 
-### Ø§Ù„Ø®Ø·ÙˆØ© 8 â€” Ø§Ø®ØªØ¨Ø§Ø± E2E
+### الخطوة 8 — اختبار E2E
 ```
-âœ… ØªØ³Ø¬ÙŠÙ„ + ØªØ³Ø¬ÙŠÙ„ Ø¯Ø®ÙˆÙ„ (Email + Google)
-âœ… ØªØµÙØ­ Ù…Ù†ØªØ¬Ø§Øª + ÙÙ„Ø§ØªØ±
-âœ… Ø³Ù„Ø© + Checkout + ÙƒÙˆØ¯ Ø®ØµÙ… + Ù†Ù‚Ø§Ø·
-âœ… Ø·Ù„Ø¨ Ø§Ø³ØªØ¨Ø¯Ø§Ù„ + QR
-âœ… Admin dashboard
-âœ… Helper portal + Ù…Ø³Ø­ QR
+✅ تسجيل + تسجيل دخول (Email + Google)
+✅ تصفح منتجات + فلاتر
+✅ سلة + Checkout + كود خصم + نقاط
+✅ طلب استبدال + QR
+✅ Admin dashboard
+✅ Helper portal + مسح QR
 ```
 
 ---
 
-## âš ï¸ ØªØ­Ø°ÙŠØ±Ø§Øª PowerShell â€” Ù…Ù‡Ù… Ø¬Ø¯Ø§Ù‹
+### الخطوة 9 — Auth Guard + زر تسجيل الخروج
+```
+[ ] useAuthGuard() hook على:
+    - AddToCartButton → /auth/login?return=[current-page]
+    - WishlistButton  → /auth/login?return=[current-page]
+    - Checkout        → محمي تلقائياً بـ middleware.ts
+    - Exchange create → /auth/login?return=/account/exchange
+    - Review submit   → /auth/login?return=[product-page]
 
-### 1. BOM ÙÙŠ JSON
+[ ] LogoutButton:
+    - Header (ويب) — يظهر فقط إذا authStore.isLoggedIn === true
+    - Account tab (موبايل) — في قائمة الحساب
+    - POST /api/auth/logout + تصفير authStore + redirect /
+```
+
+### الخطوة 10 — اختبار شامل للأزرار والإجراءات
+```
+[ ] Cart:     إضافة + تعديل كمية + حذف + مسح كامل
+[ ] Wishlist: إضافة + إزالة + تزامن مع API
+[ ] Checkout: address → shipping → payment → confirm (4 خطوات)
+[ ] Discount: صالح + منتهي + فوق مبلغ معين + أول استخدام + قسم محدد
+[ ] Loyalty:  كسب نقاط (Helper QR) + استخدام (Checkout toggle)
+[ ] Exchange: اختيار منتجات + QR + تأكيد Helper + تحديث status
+[ ] Admin:    CRUD منتجات + طلبات + عملاء + خصومات + هيلبرز + محلات
+[ ] Helper:   مسح QR استبدال + تسجيل ولاء + اقتراح منتج + تحديث مخزون
+```
+
+## ⚠️ تحذيرات PowerShell — مهم جداً
+
+### 1. BOM في JSON
 ```powershell
-# âŒ Ø®Ø·Ø£ â€” ÙŠÙƒØ³Ø± JSON
+# ❌ خطأ — يكسر JSON
 Set-Content -Path "file.json" -Value $content -Encoding UTF8
 
-# âœ… ØµØ­ÙŠØ­ Ø¯Ø§Ø¦Ù…Ø§Ù‹
+# ✅ صحيح دائماً
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 [System.IO.File]::WriteAllText("full\path\file.json", $content, $utf8NoBom)
 ```
 
-### 2. Ø§Ù„Ø£Ù‚ÙˆØ§Ø³ Ø§Ù„Ù…Ø±Ø¨Ø¹Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø§Ø±Ø§Øª
+### 2. الأقواس المربعة في المسارات
 ```powershell
-# âŒ Ø®Ø·Ø£ Ù…Ø¹ [id] Ø£Ùˆ [slug]
+# ❌ خطأ مع [id] أو [slug]
 Set-Content "$A\app\[locale]\page.tsx" -Encoding UTF8 @'...'@
 
-# âœ… ØµØ­ÙŠØ­
+# ✅ صحيح
 Set-Content -LiteralPath "$A\app\[locale]\page.tsx" -Encoding UTF8 @'...'@
 ```
 
 ### 3. Turbo recursive loop
 ```powershell
-# Ù„Ø§ ØªØ³ØªØ®Ø¯Ù… "dev" ÙƒØ§Ø³Ù… script ÙÙŠ root package.json
-# Ø§Ø³ØªØ®Ø¯Ù… Ø¨Ø¯Ù„Ø§Ù‹:
+# لا تستخدم "dev" كاسم script في root package.json
+# استخدم بدلاً:
 npx turbo run dev --filter=@euro/web
-# Ø£Ùˆ
-npm run dev:web  # Ø¥Ø°Ø§ ÙƒØ§Ù† Ù…ÙØ¹Ø±ÙŽÙ‘ÙØ§Ù‹ Ø¨Ù‡Ø°Ø§ Ø§Ù„Ø§Ø³Ù…
+# أو
+npm run dev:web  # إذا كان مُعرَّفاً بهذا الاسم
 ```
 
-### ØªØ´ØºÙŠÙ„ Ø§Ù„Ù…Ø´Ø±ÙˆØ¹ Ù…Ø­Ù„ÙŠØ§Ù‹ Ø§Ù„Ø¢Ù†
+### تشغيل المشروع محلياً الآن
 ```powershell
 cd "D:\Files\Programming_Projects\Euro Store\apps\web"
 npx next dev
-# â†’ http://localhost:3000 âœ…
+# → http://localhost:3000 ✅
 ```

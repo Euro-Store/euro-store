@@ -1,12 +1,20 @@
-﻿'use client'
+'use client'
 import { useState, useEffect } from 'react'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import Link from 'next/link'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import { Heart, ShoppingBag, User } from 'lucide-react'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import TopBanner from './TopBanner'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import SearchBar  from './SearchBar'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import MegaMenu   from './MegaMenu'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import ThemeToggle from './ThemeToggle'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 import { navLinks } from '@/lib/design-tokens'
+import { LogoutButton } from '@/components/shared/LogoutButton'
 
 export default function Header() {
   const [scrolled,    setScrolled]    = useState(false)
@@ -57,7 +65,8 @@ export default function Header() {
                   </div>
                 )
               })}
-            </nav>
+            <LogoutButton />
+</nav>
 
             {/* Icons */}
             <div className="flex items-center gap-0.5 mr-auto">

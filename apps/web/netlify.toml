@@ -1,4 +1,4 @@
-﻿[build]
+[build]
   base    = "apps/web"
   command = "npm install && npx next build"
   publish = "apps/web/.next"

@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && cd apps/admin && npm install styled-jsx && npx next build"
+  command = "cd apps/admin && npm install --legacy-peer-deps && npx next build"
   publish = "apps/admin/.next"
 
 [build.environment]

@@ -1,7 +1,6 @@
 [build]
-  base    = "apps/admin"
-  command = "npm install && npx next build"
-  publish = ".next"
+  command = "npm install && cd apps/admin && npx next build"
+  publish = "apps/admin/.next"
 
 [build.environment]
   NODE_VERSION = "20"

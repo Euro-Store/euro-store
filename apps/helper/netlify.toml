@@ -1,7 +1,6 @@
 [build]
-  base    = "apps/helper"
-  command = "npm install && npx next build"
-  publish = ".next"
+  command = "npm install && cd apps/helper && npx next build"
+  publish = "apps/helper/.next"
 
 [build.environment]
   NODE_VERSION = "20"

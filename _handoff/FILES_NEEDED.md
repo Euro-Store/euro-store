@@ -38,9 +38,10 @@ Set-Content -LiteralPath "$A\app\[locale]\page.tsx" -Encoding UTF8 @'...'@
 ## ⚠️ تحذير 4 — Netlify مُهجور
 لا تحاول النشر على Netlify مجدداً.
 السبب: bug مزمن في @netlify/plugin-nextjs v5 مع monorepos (styled-jsx).
-الحل: Vercel فقط.
+الحل: Vercel فقط — يدعم monorepo natively وهو المنصة الرسمية لـ Next.js.
 
 ## تشغيل المشروع محلياً
-cd "D:\Files\Programming_Projects\Euro Store\apps\web"    → npx next dev       → :3000
-cd "D:\Files\Programming_Projects\Euro Store\apps\admin"  → npx next dev -p 3001
-cd "D:\Files\Programming_Projects\Euro Store\apps\helper" → npx next dev -p 3002
+cd "D:\Files\Programming_Projects\Euro Store\apps\web"     → npx next dev       → :3000
+cd "D:\Files\Programming_Projects\Euro Store\apps\admin"   → npx next dev -p 3001
+cd "D:\Files\Programming_Projects\Euro Store\apps\helper"  → npx next dev -p 3002
+cd "D:\Files\Programming_Projects\Euro Store\apps\partner" → npx next dev -p 3003

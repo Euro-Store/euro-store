@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-dark: #A07830;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; direction: rtl; }

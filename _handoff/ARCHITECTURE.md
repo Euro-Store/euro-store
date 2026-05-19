@@ -107,13 +107,21 @@ eurostore.sy/
 └── helper.[domain]/                      ← جديد: بوابة الهيلبر المنفصلة
     ├── login/
     └── dashboard/
-        ├── page.tsx                      ← ملخص سريع
-        ├── inventory/                    ← إدارة مخزون المنتجات
+        ├── page.tsx                      ← ملخص سريع (إحصائيات اليوم)
+        ├── inventory/                    ← إدارة مخزون المنتجات + اقتراح تعديل
         ├── products/
-        │   ├── page.tsx
+        │   ├── page.tsx                  ← اقتراح إضافة/تعديل/حذف منتج
         │   └── new/                      ← اقتراح منتج جديد للأدمن
-        ├── exchanges/                    ← استقبال طلبات الاستبدال بـ QR
-        └── loyalty/                      ← تسجيل مشتريات داخل المحل
+        ├── exchanges/                    ← استقبال استبدال/إرجاع في المحل بـ QR
+        ├── loyalty/                      ← تسجيل مشتريات داخل المحل
+        └── my-requests/                  ← اقتراحاتي + حالتها (معلقة/موافق/مرفوض)
+
+└── partner.[domain]/                     ← جديد: بوابة الشريك (نقطة الاستلام)
+    ├── login/
+    └── dashboard/
+        ├── page.tsx                      ← طلبات اليوم + إحصائيات الاستلام
+        ├── scan/                         ← مسح QR الزبون (الصفحة الرئيسية)
+        └── history/                      ← سجل الاستلامات السابقة
 ```
 
 ════════════════════════════════════════════════════════════════
@@ -183,12 +191,21 @@ eurostore.sy/
 │ nameAr           │      │ userId (FK)       │
 │ area             │◄─────│ orderId (FK)      │
 │ phone            │      │ status            │
-│ isActive         │      │  PENDING|CONFIRMED│
-│ createdAt        │      │  SHIPPED|DONE     │
-└──────────────────┘      │ qrToken (unique)  │
-                          │ partnerShopId(FK) │
-                          │ confirmedAt       │
-                          │ createdAt         │
+│ isActive         │      │  PENDING          │
+│ createdAt        │      │  CONFIRMED_BY_HELPER│
+└──────────────────┘      │  CONFIRMED_BY_PARTNER│
+                          │  CONFIRMED_IN_STORE │
+                          │  IN_TRANSIT        │
+                          │  DELIVERED         │
+                          │  COMPLETED         │
+                          │  REJECTED          │
+                          │ source             │
+                          │  IN_STORE|PARTNER  │
+                          │ qrToken (unique)   │
+                          │ partnerShopId(FK)? │
+                          │ rejectionReason?   │
+                          │ confirmedAt        │
+                          │ createdAt          │
                           └───────────────────┘
                                    │ 1:N
                                    ▼
@@ -253,6 +270,7 @@ eurostore.sy/
                           │ type              │
                           │  ADD_PRODUCT      │
                           │  EDIT_PRODUCT     │
+                          │  DELETE_PRODUCT   │
                           │  UPDATE_STOCK     │
                           │ payload (JSON)    │
                           │ status            │
@@ -262,7 +280,18 @@ eurostore.sy/
                           │ reviewNote        │
                           │ createdAt         │
                           └───────────────────┘
-```
+
+┌──────────────────┐
+│  PartnerUser     │   ← صاحب نقطة الاستلام المستقلة
+├──────────────────┤
+│ id (PK)          │
+│ userId (FK) uniq │
+│ shopName         │
+│ area             │
+│ phone            │
+│ isActive         │
+│ createdAt        │
+└──────────────────┘
 
 ════════════════════════════════════════════════════════════════
 ## 3. USER JOURNEY FLOWCHART — تدفق رحلة المستخدم
@@ -331,43 +360,80 @@ eurostore.sy/
 ```
 
 ════════════════════════════════════════════════════════════════
-## 3B. EXCHANGE FLOW — تدفق الاستبدال
+## 3B. EXCHANGE FLOW — تدفق الاستبدال (مساران)
 ════════════════════════════════════════════════════════════════
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
-│                    EXCHANGE FLOW                               │
+│           EXCHANGE FLOW — مسار أ: في المحل (HELPER)           │
 └───────────────────────────────────────────────────────────────┘
 
-  [1] الزبون                [2] النظام             [3] المحل الشريك
-┌─────────────┐           ┌──────────────┐        ┌─────────────────┐
-│ يختار       │  ────────►│ ينشئ طلب    │        │ Helper يفتح     │
-│ المنتجات    │           │ استبدال      │        │ بوابة الهيلبر   │
-│ للاستبدال   │           │ ويولّد       │        │                 │
-│ من صفحة     │           │ qrToken      │        │ يصور QR الزبون  │
-│ طلبه        │           │ فريد         │        │                 │
-└─────────────┘           └──────┬───────┘        │ تظهر تفاصيل    │
-                                  │                │ المنتجات        │
-                                  ▼                │ (صور + مواصفات)│
-                          ╔═══════════════╗        │                 │
-                          ║ QR Code يظهر  ║────────│ يفحص القطع     │
-                          ║ للزبون في     ║        │                 │
-                          ║ account/      ║        │ يضغط "تأكيد    │
-                          ║ exchange/[id] ║        │ الاستلام"       │
-                          ╚═══════════════╝        └────────┬────────┘
-                                                            │
-                                                            ▼
-                                                   ╔═════════════════╗
-                                                   ║ يُحدَّث status  ║
-                                                   ║ → CONFIRMED     ║
-                                                   ╚════════╤════════╝
-                                                            │
-                                                            ▼
-                                                   ╔═════════════════╗
-                                                   ║ سائق التوصيل    ║
-                                                   ║ يوصل المنتجات  ║
-                                                   ║ البديلة للزبون  ║
-                                                   ╚═════════════════╝
+  [1] الزبون                    [2] النظام            [3] الهيلبر (موظف المحل)
+┌─────────────────┐          ┌─────────────┐       ┌────────────────────────┐
+│ يأتي للمحل      │          │ ينشئ طلب    │       │ يفتح بوابة الهيلبر    │
+│ بنفسه           │          │ استبدال      │       │                        │
+│ يفتح التطبيق   │──────────►│ source:      │       │ يضغط "مسح QR"         │
+│ يختار "استبدال" │          │ IN_STORE     │       │                        │
+│ يُظهر QR        │          │ يولّد qrToken│       │ يصور QR الزبون        │
+└─────────────────┘          └──────┬──────┘       │                        │
+                                     │              │ يرى: صور المنتجات +   │
+                                     ▼              │ الأحجام + الألوان      │
+                             ╔═══════════════╗      │                        │
+                             ║ QR على هاتف  ║──────►│ يفحص القطع فعلياً    │
+                             ║ الزبون        ║      │                        │
+                             ╚═══════════════╝      │ يضغط "تأكيد الاستلام" │
+                                                    └──────────┬─────────────┘
+                                                               │
+                                                               ▼
+                                                    ╔══════════════════════╗
+                                                    ║ status:              ║
+                                                    ║ CONFIRMED_IN_STORE   ║
+                                                    ║ → هيلبر يسلّم البديل ║
+                                                    ║   فوراً من المخزون   ║
+                                                    ║ → NEW_ORDER_CREATED  ║
+                                                    ║ → COMPLETED          ║
+                                                    ║ (لا توصيل)           ║
+                                                    ╚══════════════════════╝
+
+┌───────────────────────────────────────────────────────────────┐
+│       EXCHANGE FLOW — مسار ب: نقطة الاستلام (PARTNER)        │
+└───────────────────────────────────────────────────────────────┘
+
+  [1] الزبون                  [2] النظام           [3] الشريك (Partner)
+┌─────────────────┐          ┌─────────────┐      ┌─────────────────────┐
+│ يختار المنتجات  │          │ ينشئ طلب    │      │ يفتح بوابة الشريك  │
+│ في التطبيق      │──────────►│ source:     │      │                     │
+│ يختار أقرب      │          │ PARTNER     │      │ يضغط "مسح QR جديد" │
+│ نقطة استلام     │          │ يولّد qrToken│      │                     │
+│ يُظهر QR        │          └──────┬──────┘      │ يصور QR الزبون     │
+└─────────────────┘                 │             │                     │
+                                    ▼             │ يرى:                │
+                            ╔═══════════════╗     │ • اسم الزبون (مختصر)│
+                            ║ QR على هاتف  ║─────►│ • صور المنتجات      │
+                            ║ الزبون        ║     │ • قائمة تحقق        │
+                            ╚═══════════════╝     │                     │
+                                                  │ ☐ منتجات موجودة     │
+                                                  │ ☐ بدون تلف          │
+                                                  │ ☐ وسوم موجودة       │
+                                                  └──────────┬──────────┘
+                                                             │
+                                              ┌──────────────┴──────────────┐
+                                              │ تأكيد                        │ رفض + سبب
+                                              ▼                              ▼
+                                   ╔════════════════╗          ╔═══════════════════╗
+                                   ║ CONFIRMED_BY_  ║          ║ REJECTED           ║
+                                   ║ PARTNER        ║          ║ إشعار للزبون       ║
+                                   ║ إشعار للزبون  ║          ║ + سبب الرفض        ║
+                                   ║ + للأدمن       ║          ╚═══════════════════╝
+                                   ╚═══════╤════════╝
+                                           │
+                                           ▼
+                                   ╔════════════════╗
+                                   ║ IN_TRANSIT     ║
+                                   ║ سائق يستلم من  ║
+                                   ║ نقطة الاستلام  ║
+                                   ║ → يوصل البديل  ║
+                                   ╚════════════════╝
 ```
 
 ════════════════════════════════════════════════════════════════
@@ -429,7 +495,35 @@ Helper                     Backend                 Admin
 
 ════════════════════════════════════════════════════════════════
 ════════════════════════════════════════════════════════════════
-## 3E. AUTH GUARD FLOW — حماية الإجراءات للزوار
+## 3E. ORDER STATES — حالات الطلبات
+════════════════════════════════════════════════════════════════
+
+```
+EXCHANGE (استبدال عبر شريك خارجي):
+  PENDING
+    → CONFIRMED_BY_PARTNER  (شريك أكّد الاستلام)
+    → IN_TRANSIT            (سائق استلم من نقطة الاستلام)
+    → DELIVERED             (وصل للزبون)
+    → COMPLETED
+    → REJECTED              (شريك رفض + سبب)
+
+IN_STORE_EXCHANGE (استبدال مباشر مع الهيلبر في المحل):
+  PENDING
+    → CONFIRMED_IN_STORE    (هيلبر أكّد الاستلام + سلّم البديل فوراً)
+    → COMPLETED
+  (لا IN_TRANSIT — الزبون أخذ البديل يداً بيد)
+
+RETURN (إرجاع — disabled UI):
+  PENDING
+    → RECEIVED_BY_HELPER    (هيلبر استلم في المحل)
+    → RECEIVED_BY_PARTNER   (شريك استلم)
+    → ADMIN_REVIEW          (ينتظر قرار الأدمن)
+    → REFUND_APPROVED       → REFUNDED
+    → REJECTED / REFUND_REJECTED (مع سبب)
+```
+
+════════════════════════════════════════════════════════════════
+## 3F. AUTH GUARD FLOW — حماية الإجراءات للزوار
 ════════════════════════════════════════════════════════════════
 
 ```
@@ -600,7 +694,7 @@ Client (Web/Mobile/Helper)
         │  HTTPS
         ▼
 ╔══════════════════════╗
-║   API Gateway        ║   Netlify Functions (تجريبي) / Hostinger (إنتاج) — api.eurostore.sy
+║   API Gateway        ║   Vercel Serverless Functions (تجريبي) / Hostinger (إنتاج) — api.eurostore.sy
 ║   Express + TS       ║
 ╠══════════════════════╣
 ║ Middleware Stack:     ║
@@ -608,7 +702,7 @@ Client (Web/Mobile/Helper)
 ║  - cors              ║
 ║  - rate-limiter      ║  ← Supabase Auth + in-memory middleware
 ║  - auth (JWT verify) ║
-║  - role-check        ║  ← CUSTOMER | HELPER | ADMIN
+║  - role-check        ║  ← CUSTOMER | HELPER | PARTNER | ADMIN
 ║  - request-logger    ║
 ╚══════════╤═══════════╝
            │
@@ -636,7 +730,8 @@ Client (Web/Mobile/Helper)
 ║           exchangeItems, returnRequests,              ║
 ║           loyaltyAccounts, loyaltyTransactions,      ║
 ║           discountCodes, discountUsages,             ║
-║           helperUsers, helperSubmissions             ║
+║           helperUsers, helperSubmissions,            ║
+║           partnerUsers                               ║
 ╚══════════════════════════════════════════════════════╝
 ```
 
@@ -714,14 +809,20 @@ POST   /api/discounts/validate     ← {code, cartTotal, categoryIds}
 GET    /api/discounts/:code        ← تفاصيل الكود (إن كان عاماً)
 
 HELPER (role: HELPER)
-GET    /api/helper/products        ← قائمة المنتجات مع المخزون
-PATCH  /api/helper/products/:id/stock ← تحديث مخزون (مباشر)
-POST   /api/helper/submissions     ← اقتراح إضافة/تعديل (pending)
-GET    /api/helper/submissions     ← اقتراحاتي
-GET    /api/helper/exchanges       ← طلبات الاستبدال المعلقة
-POST   /api/helper/exchanges/scan  ← {qrToken} → تفاصيل الطلب
-POST   /api/helper/exchanges/:id/confirm ← تأكيد استلام
-POST   /api/helper/loyalty/earn    ← {userQRToken, invoiceAmount} → نقاط
+GET    /api/helper/products           ← قائمة المنتجات مع المخزون
+POST   /api/helper/submissions        ← اقتراح إضافة/تعديل/حذف منتج (pending)
+GET    /api/helper/submissions        ← اقتراحاتي + حالتها
+GET    /api/helper/exchanges          ← طلبات الاستبدال IN_STORE المعلقة
+POST   /api/helper/exchanges/scan     ← {qrToken} → تفاصيل الطلب
+POST   /api/helper/exchanges/:id/confirm ← تأكيد استلام في المحل (+ تسليم بديل)
+POST   /api/helper/exchanges/:id/reject  ← رفض + سبب
+POST   /api/helper/loyalty/earn       ← {userQRToken, invoiceAmount} → نقاط
+
+PARTNER (role: PARTNER)
+POST   /api/partner/scan              ← {qrToken} → تفاصيل الطلب
+POST   /api/partner/exchanges/:id/confirm ← تأكيد استلام
+POST   /api/partner/exchanges/:id/reject  ← {reason} رفض
+GET    /api/partner/history           ← سجل الاستلامات (اليوم + السابق)
 
 ADMIN (role: ADMIN)
 GET    /api/admin/dashboard/stats
@@ -756,6 +857,10 @@ ADMIN — HELPERS & PARTNER SHOPS
 GET    /api/admin/helpers
 POST   /api/admin/helpers            ← {userId} → تعيين كـ helper
 DELETE /api/admin/helpers/:id
+GET    /api/admin/partners           ← قائمة الشركاء (نقاط الاستلام)
+POST   /api/admin/partners           ← {userId} → تعيين كـ partner
+PATCH  /api/admin/partners/:id
+DELETE /api/admin/partners/:id
 GET    /api/admin/partner-shops
 POST   /api/admin/partner-shops
 PATCH  /api/admin/partner-shops/:id
@@ -975,19 +1080,20 @@ Rules:
 │           مرحلة التطوير والاختبار (الآن)                    │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  apps/web      ──────►  Netlify                            │
-│  apps/admin    ──────►  Netlify  (subdomain مخفي)          │
-│  apps/helper   ──────►  Netlify  (subdomain مخفي)          │
+│  apps/web      ──────►  Vercel                             │
+│  apps/admin    ──────►  Vercel  (subdomain مخفي)           │
+│  apps/helper   ──────►  Vercel  (subdomain مخفي)           │
+│  apps/partner  ──────►  Vercel  (subdomain مخفي)           │
 │                                                             │
-│  API Backend       ─►  Netlify Functions (Next.js API)     │
+│  API Backend       ─►  Vercel Serverless Functions          │
 │  Auth/Sessions     ─►  Supabase Auth (JWT + Google OAuth)  │
 │                                                             │
 │  PostgreSQL    ──────►  Supabase  (free: 500MB)            │
 │  File Storage  ──────►  Supabase Storage  (free: 1GB)      │
 │  Search        ──────►  pg_search على Supabase (مؤقتاً)   │
 │                                                             │
-│  ملاحظة: Netlify + Supabase يكفيان — بلا Railway أو Redis │
-│          Edge Functions للعمليات البسيطة                    │
+│  ملاحظة: Vercel + Supabase يكفيان — بلا Railway أو Redis  │
+│          Vercel = المنصة الرسمية لـ Next.js (zero config)  │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐

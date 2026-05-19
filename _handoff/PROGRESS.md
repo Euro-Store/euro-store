@@ -44,18 +44,31 @@
              SUPABASE_SERVICE_ROLE_KEY, DATABASE_URL, DIRECT_URL,
              GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, JWT_SECRET
 
-2. اختبار E2E كامل:
+2. بناء Partner Portal (apps/partner) — جديد:
+   - تطبيق Next.js 14 + shadcn/ui منفصل (3 صفحات: scan + dashboard + history)
+   - API endpoints: /api/partner/scan | confirm | reject | history
+   - جدول DB جديد: PartnerUser
+   - نشر على Vercel: euro-store-partner
+   - إضافة PARTNER role إلى Prisma schema + Supabase + middleware
+
+3. إضافة DELETE_PRODUCT لـ HelperSubmission:
+   - بوابة الهيلبر: زر "اقتراح حذف" في صفحة المنتجات
+   - Admin: عرض طلبات الحذف في pending-reviews
+
+4. اختبار E2E كامل:
    [ ] تصفح منتجات + فلاتر
    [ ] إضافة للسلة + Checkout
    [ ] كود خصم + نقاط ولاء
-   [ ] طلب استبدال + QR
+   [ ] طلب استبدال + QR (مسار in-store + مسار partner)
    [ ] Admin dashboard CRUD
-   [ ] Helper portal QR scan
+   [ ] Helper portal: QR scan + loyalty + submissions
+   [ ] Partner portal: QR scan + confirm/reject
 
 ## URLs الفعلية على Vercel
-- Web:    https://euro-store-web.vercel.app
-- Admin:  https://euro-store-admin-seven.vercel.app
-- Helper: ⏳ لم يُنشر بعد
+- Web:     https://euro-store-web.vercel.app
+- Admin:   https://euro-store-admin-seven.vercel.app
+- Helper:  ⏳ لم يُنشر بعد
+- Partner: ❌ لم يُبنَ بعد
 
 ## آخر تحديث: 2026-05-19
-## الحالة: Web ✅ | Admin ✅ | Helper ✅ (محلي) ⏳ (Vercel) | E2E ⏳
+## الحالة: Web ✅ | Admin ✅ | Helper ✅ (محلي) ⏳ (Vercel) | Partner ❌ (لم يُبنَ) | E2E ⏳

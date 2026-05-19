@@ -8,13 +8,15 @@
 | Mobile           | Expo React Native             | SDK 51    | iOS + Android                  |
 | Admin Panel      | Next.js 14                    | 14.x      | لوحة إدارة منفصلة              |
 | Helper Portal    | Next.js 14                    | 14.x      | بوابة الهيلبر المنفصلة         |
+| Partner Portal   | Next.js 14                    | 14.x      | بوابة الشركاء (نقاط الاستلام) |
 | Language         | TypeScript                    | 5.x       | كل الكود                       |
 | Styling Web      | Tailwind CSS                  | 3.x       | utility-first                  |
 | Styling Mobile   | NativeWind                    | 4.x       | Tailwind للموبايل              |
 | Admin UI Kit     | shadcn/ui + Recharts          | latest    | مكونات الأدمن والرسوم           |
 | Helper UI Kit    | shadcn/ui                     | latest    | مكونات بوابة الهيلبر           |
+| Partner UI Kit   | shadcn/ui                     | latest    | مكونات بوابة الشريك (مبسّطة)  |
 | State Management | Zustand                       | 4.x       | مشترك Web+Mobile               |
-| Backend          | Next.js API Routes            | 14.x      | Serverless عبر Netlify Functions |
+| Backend          | Next.js API Routes            | 14.x      | Serverless عبر Vercel           |
 | Database         | PostgreSQL (Supabase)         | 15.x      | البيانات الأساسية               |
 | ORM              | Prisma                        | 5.x       | DB access layer                |
 | Auth             | JWT + Refresh Tokens          | -         | httpOnly cookies               |
@@ -26,17 +28,17 @@
 | Monorepo         | Turborepo                     | 2.x       | إدارة packages                 |
 | i18n             | next-intl                     | 3.x       | ar/en                          |
 | Fonts            | Google Fonts: Tajawal         | -         | RTL عربي احترافي               |
-| Hosting (تجريبي) | Netlify                       | -         | web + admin + helper deploy    |
-| API Functions    | Netlify Functions (Serverless)| -         | API Routes تُنشر تلقائياً مع Next.js |
+| Hosting (تجريبي) | Vercel                        | -         | web + admin + helper + partner |
+| API Functions    | Vercel Serverless Functions   | -         | API Routes تُنشر تلقائياً مع Next.js |
 | Hosting (إنتاج)  | Hostinger Business            | -         | النشر الحقيقي عند الإطلاق الفعلي|
 | Analytics        | Plausible                     | -         | privacy-first analytics        |
 
 ## ملاحظة الاستضافة
 ```
 مرحلة التطوير والاختبار:
-  → Netlify     : apps/web + apps/admin + apps/helper (Next.js static/SSR)
+  → Vercel      : apps/web + apps/admin + apps/helper + apps/partner (Next.js — zero config)
   → Supabase    : PostgreSQL + Storage + Auth (مجاني: 500MB DB + 1GB Storage + Auth)
-  → Netlify Fns : API Routes تُنشر تلقائياً كـ Serverless Functions (مع كل تطبيق)
+  → Vercel Fns  : API Routes تُنشر تلقائياً كـ Serverless Functions (مع كل تطبيق)
 
 مرحلة الإنتاج الحقيقي (عند الإطلاق الفعلي):
   → Hostinger Business : hosting شامل — domain + SSL + email
@@ -341,7 +343,8 @@ Euro Store/
 │       │       ├── products/
 │       │       │   ├── page.tsx
 │       │       │   └── new/page.tsx       ← اقتراح منتج جديد
-│       │       ├── exchanges/page.tsx     ← طلبات الاستبدال
+│       │       ├── exchanges/page.tsx     ← طلبات الاستبدال (مسح QR في المحل)
+│       │       ├── my-requests/page.tsx   ← اقتراحاتي + حالتها
 │       │       └── loyalty/page.tsx       ← تسجيل مشتريات داخل المحل
 │       └── components/
 │           ├── layout/
@@ -353,6 +356,26 @@ Euro Store/
 │           │   └── ExchangeScanner.tsx    ← مسح QR
 │           └── loyalty/
 │               └── LoyaltyEarnForm.tsx    ← تسجيل نقاط
+│
+│   ├── partner/                  ← جديد: بوابة الشريك (نقطة الاستلام)
+│       ├── app/
+│       │   ├── layout.tsx
+│       │   ├── page.tsx
+│       │   ├── login/page.tsx
+│       │   └── dashboard/
+│       │       ├── layout.tsx
+│       │       ├── page.tsx               ← طلبات اليوم + إحصائيات
+│       │       ├── scan/page.tsx          ← مسح QR الزبون (الرئيسية)
+│       │       └── history/page.tsx       ← سجل الاستلامات السابقة
+│       └── components/
+│           ├── layout/
+│           │   ├── PartnerSidebar.tsx
+│           │   └── PartnerHeader.tsx
+│           ├── scan/
+│           │   ├── QRScanner.tsx          ← مسح QR الزبون
+│           │   └── ConfirmationCard.tsx   ← تفاصيل الطلب + قائمة تحقق
+│           └── history/
+│               └── HistoryTable.tsx
 ├── backend/
 │   └── src/
 │       ├── modules/

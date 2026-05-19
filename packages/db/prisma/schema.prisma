@@ -16,6 +16,7 @@ datasource db {
 enum Role {
   CUSTOMER
   HELPER
+  PARTNER
   ADMIN
 }
 
@@ -38,6 +39,9 @@ enum ExchangeStatus {
   REQUESTED
   QR_GENERATED
   RECEIVED_BY_HELPER
+  CONFIRMED_BY_PARTNER
+  IN_STORE_EXCHANGE
+  IN_TRANSIT
   PROCESSING
   SHIPPED
   COMPLETED
@@ -92,6 +96,7 @@ model User {
   discountUsages     DiscountUsage[]
   exchangeRequests   ExchangeRequest[]
   helperProfile      HelperProfile?
+  partnerProfile     PartnerUser?
 
   @@index([email])
   @@index([loyaltyQrCode])
@@ -304,8 +309,9 @@ model ExchangeRequest {
   partnerShop   PartnerShop?   @relation(fields: [partnerShopId], references: [id])
   helperId      String?
   helper        HelperProfile? @relation("HelperExchanges", fields: [helperId], references: [id])
-  helperNote    String?
-  adminNote     String?
+  helperNote      String?
+  adminNote       String?
+  rejectionReason String?
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -412,4 +418,16 @@ model HelperSubmission {
 
   @@index([helperId])
   @@index([status])
+}
+// --- Partner User ----------------------------------------------------------
+
+model PartnerUser {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  shopName  String
+  area      String
+  phone     String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

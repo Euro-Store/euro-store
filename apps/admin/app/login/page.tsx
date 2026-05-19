@@ -1,7 +1,6 @@
 "use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -14,19 +13,13 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true); setError("")
     try {
-      const supabase = createClient()
-      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
-      if (authError) throw new Error(authError.message)
-
-      const token = data.session?.access_token
-      const res = await fetch("/api/auth/me", {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       })
-      const userData = await res.json()
-      if (userData?.role !== "ADMIN") {
-        await supabase.auth.signOut()
-        throw new Error("ليس لديك صلاحية الوصول")
-      }
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "فشل تسجيل الدخول")
       router.push("/dashboard")
     } catch (err: any) {
       setError(err.message)

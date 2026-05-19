@@ -1,7 +1,7 @@
-﻿"use client"
+"use client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { setAdminToken } from "@/lib/auth"
+import { createClient } from "@/lib/supabase/client"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -14,15 +14,19 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true); setError("")
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL||"http://localhost:5000/api"}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const supabase = createClient()
+      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
+      if (authError) throw new Error(authError.message)
+
+      // تحقق من الـ role عبر API
+      const res = await fetch("/api/auth/me", {
+        headers: { "Authorization": `Bearer ${data.session?.access_token}` }
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.message || "فشل تسجيل الدخول")
-      if (data.user?.role !== "ADMIN") throw new Error("ليس لديك صلاحية الوصول")
-      setAdminToken(data.accessToken)
+      const userData = await res.json()
+      if (userData?.role !== "ADMIN") {
+        await supabase.auth.signOut()
+        throw new Error("ليس لديك صلاحية الوصول")
+      }
       router.push("/dashboard")
     } catch (err: any) {
       setError(err.message)

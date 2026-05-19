@@ -8,19 +8,30 @@ import SearchBar  from './SearchBar'
 import MegaMenu   from './MegaMenu'
 import ThemeToggle from './ThemeToggle'
 import { navLinks } from '@/lib/design-tokens'
-import { useAuthStore } from '@/store/authStore'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Header() {
-  const [scrolled,    setScrolled]    = useState(false)
-  const [activeMenu,  setActiveMenu]  = useState<string | null>(null)
-  const [cartCount,   setCartCount]   = useState(0)
-  const [mobileOpen,  setMobileOpen]  = useState(false)
-  const { user } = useAuthStore()
+  const [scrolled,   setScrolled]  = useState(false)
+  const [activeMenu, setActiveMenu] = useState<string | null>(null)
+  const [cartCount,  setCartCount]  = useState(0)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 8)
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
+  }, [])
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getSession().then(({ data }) => {
+      setIsLoggedIn(!!data.session)
+    })
+    const { data: listener } = supabase.auth.onAuthStateChange((_e, session) => {
+      setIsLoggedIn(!!session)
+    })
+    return () => listener.subscription.unsubscribe()
   }, [])
 
   return (
@@ -79,7 +90,7 @@ export default function Header() {
                   </span>
                 )}
               </Link>
-              {user ? (
+              {isLoggedIn ? (
                 <>
                   <Link href="/ar/account" aria-label="حسابي"
                     className="p-2 rounded-btn text-light-muted dark:text-dark-muted hover:text-gold hover:bg-light-elevated dark:hover:bg-dark-elevated transition-all">
@@ -117,7 +128,7 @@ export default function Header() {
                   {item.label}
                 </Link>
               ))}
-              {user && <div className="pt-2"><LogoutButton /></div>}
+              {isLoggedIn && <div className="pt-2"><LogoutButton /></div>}
             </div>
           </div>
         )}

@@ -15,13 +15,10 @@ export default function LoginPage() {
     setLoading(true); setError("")
     try {
       const supabase = createClient()
-      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
+      const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
       if (authError) throw new Error(authError.message)
 
-      // تحقق من الـ role عبر API
-      const res = await fetch("/api/auth/me", {
-        headers: { "Authorization": `Bearer ${data.session?.access_token}` }
-      })
+      const res = await fetch("/api/auth/me")
       const userData = await res.json()
       if (userData?.role !== "ADMIN") {
         await supabase.auth.signOut()

@@ -1,14 +1,16 @@
-﻿"use client"
+"use client"
 import { TrendingUp, TrendingDown, ShoppingBag, Users, Package, DollarSign } from "lucide-react"
 import type { DashboardStats } from "@/types"
 import { formatCurrency } from "@/lib/utils"
 
+function fmt(n: number) { return n.toLocaleString("en-US") }
+
 export default function StatsCards({ stats }: { stats: DashboardStats }) {
   const cards = [
     { label: "إجمالي الإيرادات", value: formatCurrency(stats.totalRevenue),    icon: DollarSign, change: stats.revenueChange,   color: "#d4a017" },
-    { label: "إجمالي الطلبات",   value: stats.totalOrders.toLocaleString("ar"), icon: ShoppingBag, change: stats.ordersChange,  color: "#0284c7" },
-    { label: "العملاء",           value: stats.totalCustomers.toLocaleString("ar"), icon: Users, change: stats.customersChange,color: "#16a34a" },
-    { label: "المنتجات",          value: stats.totalProducts.toLocaleString("ar"),  icon: Package, change: 0,                  color: "#f59e0b" },
+    { label: "إجمالي الطلبات",   value: fmt(stats.totalOrders),                icon: ShoppingBag, change: stats.ordersChange,   color: "#0284c7" },
+    { label: "العملاء",           value: fmt(stats.totalCustomers),             icon: Users,       change: stats.customersChange, color: "#16a34a" },
+    { label: "المنتجات",          value: fmt(stats.totalProducts),              icon: Package,     change: 0,                     color: "#f59e0b" },
   ]
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">

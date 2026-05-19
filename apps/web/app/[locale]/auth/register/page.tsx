@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -27,7 +27,7 @@ export default function RegisterPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'خطأ في إنشاء الحساب')
       setUser(data.user)
-      router.replace('/')
+      router.replace('/ar')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'خطأ غير متوقع')
     } finally {
@@ -68,7 +68,7 @@ export default function RegisterPage() {
           </form>
           <p className="mt-6 text-center text-sm text-light-text-muted dark:text-dark-text-muted">
             لديك حساب بالفعل؟{' '}
-            <Link href="/auth/login" className="text-gold font-medium hover:underline">تسجيل الدخول</Link>
+            <Link href="/ar/auth/login" className="text-gold font-medium hover:underline">تسجيل الدخول</Link>
           </p>
         </div>
       </div>

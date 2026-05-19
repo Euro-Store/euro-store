@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -110,7 +110,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <Link href="/auth/forgot-password" className="text-gold hover:underline">
+              <Link href="/ar/auth/forgot-password" className="text-gold hover:underline">
                 نسيت كلمة المرور؟
               </Link>
             </div>
@@ -158,7 +158,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-light-text-muted dark:text-dark-text-muted">
             ليس لديك حساب؟{' '}
-            <Link href="/auth/register" className="text-gold font-medium hover:underline">
+            <Link href="/ar/auth/register" className="text-gold font-medium hover:underline">
               إنشاء حساب
             </Link>
           </p>

@@ -3,12 +3,28 @@ import { useState, useRef, useEffect } from "react"
 import { QrCode, CheckCircle, XCircle, Camera, Package } from "lucide-react"
 import Image from "next/image"
 
+type ProductData = {
+  id: string
+  name?: string
+  title?: string
+  images?: string[]
+  imageUrls?: string[]
+  [key: string]: unknown
+}
+
+type OrderItem = {
+  id: string
+  quantity: number
+  size?: string
+  product: ProductData
+}
+
 type ExchangeData = {
   id: string
   status: string
   order: {
     user: { name: string }
-    items: { id: string; product: { name: string; images: string[] }; quantity: number; size?: string }[]
+    items: OrderItem[]
   }
 }
 
@@ -19,6 +35,15 @@ const REJECT_REASONS = [
   "المنتج مختلف عن الطلب",
   "سبب آخر"
 ]
+
+function getProductName(p: ProductData): string {
+  return (p.name ?? p.title ?? "منتج") as string
+}
+
+function getProductImage(p: ProductData): string | null {
+  const imgs = (p.images ?? p.imageUrls ?? []) as string[]
+  return imgs[0] ?? null
+}
 
 export default function ScanPage() {
   const [step, setStep] = useState<"scan" | "review" | "done">("scan")
@@ -110,20 +135,23 @@ export default function ScanPage() {
           <p className="text-yellow-100 text-sm">{exchange.order.user.name?.split(" ")[0] ?? "زبون"}</p>
         </div>
         <div className="p-4 space-y-3">
-          {exchange.order.items.map(item => (
-            <div key={item.id} className="flex items-center gap-3">
-              {item.product.images?.[0] && (
-                <Image src={item.product.images[0]} alt={item.product.name}
-                  width={60} height={60} className="rounded-lg object-cover border" />
-              )}
-              <div className="flex-1">
-                <p className="font-medium text-sm text-gray-800">{item.product.name}</p>
-                <p className="text-gray-500 text-xs mt-0.5">
-                  الكمية: {item.quantity} {item.size ? `• المقاس: ${item.size}` : ""}
-                </p>
+          {exchange.order.items.map(item => {
+            const img = getProductImage(item.product)
+            return (
+              <div key={item.id} className="flex items-center gap-3">
+                {img && (
+                  <Image src={img} alt={getProductName(item.product)}
+                    width={60} height={60} className="rounded-lg object-cover border" />
+                )}
+                <div className="flex-1">
+                  <p className="font-medium text-sm text-gray-800">{getProductName(item.product)}</p>
+                  <p className="text-gray-500 text-xs mt-0.5">
+                    الكمية: {item.quantity} {item.size ? `• المقاس: ${item.size}` : ""}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
@@ -133,9 +161,9 @@ export default function ScanPage() {
           <Package size={18} className="text-yellow-500" /> قائمة التحقق
         </p>
         {[
-          { key: "exists", label: "المنتجات موجودة ومكتملة" },
+          { key: "exists",   label: "المنتجات موجودة ومكتملة" },
           { key: "noDefect", label: "لا يوجد تلف أو تمزيق" },
-          { key: "tags", label: "وسوم الأسعار موجودة" }
+          { key: "tags",     label: "وسوم الأسعار موجودة" }
         ].map(({ key, label }) => (
           <label key={key} className="flex items-center gap-3 py-2 cursor-pointer">
             <input type="checkbox"

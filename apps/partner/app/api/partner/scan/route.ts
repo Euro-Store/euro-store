@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
           user: { select: { name: true } },
           items: {
             include: {
-              product: { select: { name: true, images: true } }
+              product: true
             }
           }
         }

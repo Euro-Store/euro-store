@@ -1,14 +1,21 @@
-# الخطوة التالية — نشر Helper + بناء Partner Portal + اختبار E2E
+# الخطوة التالية — إصلاح Partner Build + نشر Helper + E2E
 
 ## الوضع الحالي
 - Web:     ✅ https://euro-store-web.vercel.app
-- Admin:   ✅ https://euro-store-admin-seven.vercel.app — login + dashboard يعملان
-- Helper:  ✅ مُصلح محلياً — ⏳ يحتاج نشر على Vercel
-- Partner: ❌ لم يُبنَ بعد — يحتاج إنشاء apps/partner من الصفر
+- Admin:   ✅ https://euro-store-admin-seven.vercel.app
+- Helper:  ✅ محلياً — ⏳ يحتاج نشر Vercel
+- Partner: ⏳ مبني محلياً + push — يحتاج build fix (تم)
 
 ---
 
-## الخطوة 1 — نشر Helper على Vercel (يدوي)
+## الخطوة 1 — تأكيد نجاح Partner Build ✅ (تم الإصلاح)
+المشكلة كانت: `product: { select: { name: true, images: true } }`
+الحل: `product: true` في scan/route.ts + types مرنة في scan/page.tsx
+بعد push → Vercel يُعيد البناء تلقائياً → تحقق من build log
+
+---
+
+## الخطوة 2 — نشر Helper على Vercel (يدوي)
 vercel.com/new → Import Euro-Store/euro-store
 - Root Directory: apps/helper
 - Project Name: euro-store-helper
@@ -24,86 +31,40 @@ vercel.com/new → Import Euro-Store/euro-store
 
 ---
 
-## الخطوة 2 — بناء Partner Portal (apps/partner)
-تطبيق Next.js 14 + shadcn/ui جديد — بسيط جداً (3 صفحات فقط)
-
-### الصفحات:
-1. /login                ← تسجيل دخول بسيط (email + password)
-2. /dashboard            ← طلبات اليوم + عداد الاستلامات
-3. /dashboard/scan       ← مسح QR الزبون (الصفحة الرئيسية والأهم)
-4. /dashboard/history    ← سجل الاستلامات السابقة
-
-### صفحة المسح /dashboard/scan (الأهم):
-- زر "مسح QR جديد" — expo-barcode-scanner أو كاميرا المتصفح
-- عند المسح يظهر:
-  - اسم الزبون (مختصر: الاسم الأول فقط)
-  - صور المنتجات المراد استلامها + المقاس والعدد
-  - قائمة تحقق: ☐ منتجات موجودة | ☐ بدون تلف | ☐ وسوم موجودة
-- زر [✅ تأكيد الاستلام] — يُرسل PATCH /api/partner/exchanges/:id/confirm
-- زر [❌ رفض] — يختار سبباً من قائمة + يُرسل مع السبب
-
-### API endpoints للـ Partner:
-POST   /api/partner/scan              ← {qrToken} → تفاصيل الطلب
-POST   /api/partner/exchanges/:id/confirm
-POST   /api/partner/exchanges/:id/reject  ← {reason}
-GET    /api/partner/history
-
-### DB — جدول جديد:
-model PartnerUser {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  shopName  String
-  area      String
-  phone     String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  user      User     @relation(...)
-}
-
-### نشر Partner على Vercel:
-- Root Directory: apps/partner
-- Project Name: euro-store-partner
-- نفس ENV vars
+## الخطوة 3 — اختبار Partner Portal
+بعد نجاح build:
+- https://euro-store-partner.vercel.app/login
+- email: eurostore.partner@gmail.com
+- password: (كلمة المرور اللي سجلت بها في Supabase)
+اختبارات:
+[ ] تسجيل دخول → redirect إلى /dashboard
+[ ] صفحة /dashboard/scan — إدخال QR يدوي
+[ ] صفحة /dashboard/history — سجل اليوم (فارغ)
 
 ---
 
-## الخطوة 3 — إضافة DELETE_PRODUCT لاقتراحات الهيلبر
-- apps/helper/dashboard/products: إضافة زر "اقتراح حذف" لكل منتج
-- HelperSubmission type: ADD_PRODUCT | EDIT_PRODUCT | DELETE_PRODUCT | UPDATE_STOCK
+## الخطوة 4 — إضافة DELETE_PRODUCT لاقتراحات الهيلبر
+- apps/helper/dashboard/products: زر "اقتراح حذف" لكل منتج
+- HelperSubmission types: ADD_PRODUCT | EDIT_PRODUCT | DELETE_PRODUCT | UPDATE_STOCK
 - Admin pending-reviews: عرض طلبات الحذف مع تحذير واضح
 
 ---
 
-## الخطوة 4 — اختبار E2E كامل
-### Web (https://euro-store-web.vercel.app)
-[ ] تصفح منتجات + فلاتر + بحث
-[ ] تسجيل دخول / إنشاء حساب
-[ ] إضافة للسلة + Checkout
-[ ] كود خصم + نقاط ولاء
-[ ] طلب استبدال + QR (مساران: in-store + partner)
+## الخطوة 5 — اختبار E2E كامل
+### Web
+[ ] تصفح + فلاتر + بحث
+[ ] login + checkout + كود خصم + نقاط
+[ ] طلب استبدال + QR
 
-### Admin (https://euro-store-admin-seven.vercel.app)
-[ ] تسجيل دخول بـ eurostore.private@gmail.com
-[ ] عرض dashboard + إحصائيات
-[ ] CRUD منتجات
-[ ] إدارة طلبات + استبدال
-[ ] أكواد خصم
-[ ] مراجعة اقتراحات الهيلبر (pending-reviews)
-[ ] إدارة الشركاء (partner-shops)
+### Admin
+[ ] login → dashboard → CRUD منتجات
+[ ] إدارة طلبات + مراجعة اقتراحات الهيلبر
 
-### Helper (https://euro-store-helper.vercel.app)
-[ ] تسجيل دخول بـ eurostore.helper@gmail.com
-[ ] مسح QR استبدال (in-store)
-[ ] تسجيل نقاط ولاء
-[ ] اقتراح منتج / تعديل / حذف
-[ ] عرض طلباتي + حالتها
+### Helper
+[ ] login → مسح QR استبدال + نقاط ولاء + اقتراحات
 
-### Partner (https://euro-store-partner.vercel.app)
-[ ] تسجيل دخول
-[ ] مسح QR زبون
-[ ] تأكيد استلام
-[ ] رفض مع سبب
-[ ] عرض سجل اليوم
+### Partner
+[ ] login → مسح QR → تأكيد / رفض → سجل
 
 ---
 

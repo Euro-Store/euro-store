@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // إذا كان مسجلاً دخوله → حوّله فوراً
+  // Ø¥Ø°Ø§ ÙƒØ§Ù† Ù…Ø³Ø¬Ù„Ø§Ù‹ Ø¯Ø®ÙˆÙ„Ù‡ â†’ Ø­ÙˆÙ‘Ù„Ù‡ ÙÙˆØ±Ø§Ù‹
   useEffect(() => {
     if (isLoggedIn) {
       const returnUrl =
@@ -37,9 +37,9 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'خطأ في تسجيل الدخول')
+      if (!res.ok) throw new Error(data.error || 'Ø®Ø·Ø£ ÙÙŠ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„')
       setUser(data.user)
-      // العودة للصفحة المطلوبة
+      // Ø§Ù„Ø¹ÙˆØ¯Ø© Ù„Ù„ØµÙØ­Ø© Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø©
       const returnUrl =
         (typeof window !== 'undefined' && sessionStorage.getItem('returnUrl')) ||
         searchParams.get('return') ||
@@ -47,24 +47,35 @@ export default function LoginPage() {
       sessionStorage.removeItem('returnUrl')
       router.replace(returnUrl)
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'خطأ غير متوقع')
+      setError(err instanceof Error ? err.message : 'Ø®Ø·Ø£ ØºÙŠØ± Ù…ØªÙˆÙ‚Ø¹')
     } finally {
       setLoading(false)
     }
   }
 
+  async function handleGoogleLogin() {
+    const { createClient } = await import('@/lib/supabase/client')
+    const supabase = createClient()
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/api/auth/callback`,
+      },
+    })
+  }
+
   return (
     <main className="min-h-screen flex items-center justify-center bg-light-base dark:bg-dark-base px-4">
       <div className="w-full max-w-md">
-        {/* الشعار */}
+        {/* Ø§Ù„Ø´Ø¹Ø§Ø± */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gold">Euro Store</h1>
           <p className="mt-2 text-sm text-light-text-muted dark:text-dark-text-muted">
-            سجّل دخولك للمتابعة
+            Ø³Ø¬Ù‘Ù„ Ø¯Ø®ÙˆÙ„Ùƒ Ù„Ù„Ù…ØªØ§Ø¨Ø¹Ø©
           </p>
         </div>
 
-        {/* بطاقة النموذج */}
+        {/* Ø¨Ø·Ø§Ù‚Ø© Ø§Ù„Ù†Ù…ÙˆØ°Ø¬ */}
         <div className="bg-light-surface dark:bg-dark-surface rounded-card shadow-lg p-8">
           {error && (
             <div className="mb-4 p-3 rounded-btn bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 text-sm">
@@ -74,7 +85,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-5" dir="rtl">
             <div>
-              <label className="block text-sm font-medium mb-1">البريد الإلكتروني</label>
+              <label className="block text-sm font-medium mb-1">Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ</label>
               <input
                 type="email"
                 value={email}
@@ -92,13 +103,13 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">كلمة المرور</label>
+              <label className="block text-sm font-medium mb-1">ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 className="
                   w-full px-4 py-2.5 rounded-btn border
                   border-light-border dark:border-dark-border
@@ -111,7 +122,7 @@ export default function LoginPage() {
 
             <div className="flex items-center justify-between text-sm">
               <Link href="/ar/auth/forgot-password" className="text-gold hover:underline">
-                نسيت كلمة المرور؟
+                Ù†Ø³ÙŠØª ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±ØŸ
               </Link>
             </div>
 
@@ -126,7 +137,7 @@ export default function LoginPage() {
                 transition-all
               "
             >
-              {loading ? 'جارٍ تسجيل الدخول...' : 'تسجيل الدخول'}
+              {loading ? 'Ø¬Ø§Ø±Ù ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„...' : 'ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„'}
             </button>
           </form>
 
@@ -134,11 +145,12 @@ export default function LoginPage() {
           <div className="mt-4">
             <div className="relative flex items-center gap-3 my-4">
               <div className="flex-1 h-px bg-light-border dark:bg-dark-border" />
-              <span className="text-xs text-light-text-muted dark:text-dark-text-muted">أو</span>
+              <span className="text-xs text-light-text-muted dark:text-dark-text-muted">Ø£Ùˆ</span>
               <div className="flex-1 h-px bg-light-border dark:bg-dark-border" />
             </div>
-            <a
-              href="/api/auth/callback?provider=google"
+            <a<button
+              type="button"
+              onClick={handleGoogleLogin}
               className="
                 flex items-center justify-center gap-3 w-full py-2.5 rounded-btn
                 border border-light-border dark:border-dark-border
@@ -152,14 +164,14 @@ export default function LoginPage() {
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              المتابعة مع Google
-            </a>
+              Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ù…Ø¹ Google
+            </button>
           </div>
 
           <p className="mt-6 text-center text-sm text-light-text-muted dark:text-dark-text-muted">
-            ليس لديك حساب؟{' '}
+            Ù„ÙŠØ³ Ù„Ø¯ÙŠÙƒ Ø­Ø³Ø§Ø¨ØŸ{' '}
             <Link href="/ar/auth/register" className="text-gold font-medium hover:underline">
-              إنشاء حساب
+              Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨
             </Link>
           </p>
         </div>
